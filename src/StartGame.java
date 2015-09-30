@@ -1,0 +1,57 @@
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
+
+public class StartGame extends BasicGame
+{
+	
+	private Shape rect = null;
+	
+	public StartGame(String gamename)
+	{
+		super(gamename);
+	}
+
+	@Override
+	public void init(GameContainer container) throws SlickException {
+		container.setShowFPS(false);
+		rect = new Rectangle(100,100,25,25);
+	}
+
+	@Override
+	public void update(GameContainer container, int delta) throws SlickException {
+//		input.isKeyDown(Input.KEY_SPACE);
+	}
+
+	@Override
+	public void render(GameContainer container, Graphics g) throws SlickException {
+		
+		g.setColor(new Color(255,255,0));
+		g.draw(rect);
+		g.setColor(new Color(255,255,255));
+		g.fill(rect);
+	}
+
+	public static void main(String[] args)
+	{
+		try
+		{
+			AppGameContainer appgc;
+			appgc = new AppGameContainer(new StartGame("Simple Slick Game"));
+			appgc.setDisplayMode(800, 600, false);
+			appgc.start();
+		}
+		catch (SlickException ex)
+		{
+			Logger.getLogger(StartGame.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+}
