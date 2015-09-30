@@ -25,7 +25,7 @@ public class StartGame extends BasicGame
 
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		container.setShowFPS(true);
+		container.setShowFPS(false);
 		rect = new Rectangle(xP1,yP1,25,25);
 	}
 
