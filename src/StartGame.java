@@ -17,6 +17,10 @@ import org.newdawn.slick.geom.Shape;
 
 public class StartGame extends BasicGame {
 
+	// Window settings
+	private static int contHeight = 600;
+	private static int contWidth = 800;
+	
 	// Players and Ball
 	private Shape player1 = null;
 	private Shape player2 = null;
@@ -31,7 +35,8 @@ public class StartGame extends BasicGame {
 	private int[] scores = {0,0};
 
 	// Initial settings of the textbox
-	private float[] positionTextbox = {362, 50};
+	private float[] positionScoreP1 = {contWidth/2-50, 50};
+	private float[] positionScoreP2 = {contWidth/2+50, 50};
 	private Font font;
 	private TrueTypeFont ttf;
 
@@ -78,12 +83,13 @@ public class StartGame extends BasicGame {
 	 * @param container The GameContainer of the game.
 	 * @param direction The direction the ball should take.
 	 */
-	private void resetBall(GameContainer container, int direction){
+	private void resetBall(GameContainer container, double direction){
 		positionBall[0] = (float) (container.getWidth()/2.0);
 		positionBall[1] = (float) (container.getHeight()/2.0);
-		ballDx = direction;
-		ballDy = 0;
 		ballSpeed = 5;
+		ballDx = direction*ballSpeed;
+		ballDy = 0;
+		
 	}
 
 	/**
@@ -193,9 +199,11 @@ public class StartGame extends BasicGame {
 		g.draw(ball);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(ball);
-		g.drawLine(400, 0, 400, 600);
-		ttf.drawString(positionTextbox[0], positionTextbox[1], scores[0] + " - " + scores[1]);
-
+		g.drawLine(contWidth/2, 0, contWidth/2, contHeight);
+		
+		ttf.drawString(positionScoreP1[0]-10, positionScoreP1[1], Integer.toString(scores[0]));
+		ttf.drawString(positionScoreP2[0]-10, positionScoreP2[1], Integer.toString(scores[1]));
+		
 	}
 
 	public static void main(String[] args) {
@@ -203,7 +211,7 @@ public class StartGame extends BasicGame {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new StartGame("PONG"));
 			appgc.setTargetFrameRate(60);
-			appgc.setDisplayMode(800, 600, false);
+			appgc.setDisplayMode(contWidth, contHeight, false);
 			appgc.start();
 		} catch (SlickException ex) {
 			Logger.getLogger(StartGame.class.getName()).log(Level.SEVERE, null, ex);
