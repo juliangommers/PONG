@@ -39,8 +39,11 @@ public class StartGame extends BasicGame {
 	private static double MAXBOUNCEANGLE = 5 * Math.PI/12;
 
 	// Starting direction of the ball (starts with random side)
-	private double ballDx = (Math.random() <= 0.5) ? 1 : -1;
+	private double ballDx = (Math.random() <= 0.5) ? 5 : -5;
 	private double ballDy = 0;
+	private double ballSpeed = 5;
+	private double playerSpeed = 5;
+	private double increasePerBounce = 0.25;
 
 	/**
 	 * Constructor of StartGame
@@ -70,11 +73,17 @@ public class StartGame extends BasicGame {
 		return bounceAngle;
 	}
 
+	/**
+	 * Resets the original settings of the ball.
+	 * @param container The GameContainer of the game.
+	 * @param direction The direction the ball should take.
+	 */
 	private void resetBall(GameContainer container, int direction){
 		positionBall[0] = (float) (container.getWidth()/2.0);
 		positionBall[1] = (float) (container.getHeight()/2.0);
 		ballDx = direction;
 		ballDy = 0;
+		ballSpeed = 5;
 	}
 
 	/**
@@ -102,21 +111,21 @@ public class StartGame extends BasicGame {
 		Input input = container.getInput();
 		// Player interaction of Player 1
 		if (input.isKeyDown(Input.KEY_S) && player1.getY() <= (container.getHeight() - player1.getHeight())) {
-			positionP1[1]++;
+			positionP1[1] = positionP1[1] + (float)(playerSpeed);
 			player1.setLocation(positionP1[0], positionP1[1]);
 		}
 		if (input.isKeyDown(Input.KEY_W) && player1.getY() >= 0) {
-			positionP1[1]--;
+			positionP1[1] = positionP1[1] - (float)(playerSpeed);
 			player1.setLocation(positionP1[0], positionP1[1]);
 		}
 
 		// Player interaction of Player 2
 		if (input.isKeyDown(Input.KEY_DOWN) && player2.getY() <= (container.getHeight() - player2.getHeight())) {
-			positionP2[1]++;
+			positionP2[1] = positionP2[1] + (float)(playerSpeed);
 			player2.setLocation(positionP2[0], positionP2[1]);
 		}
 		if (input.isKeyDown(Input.KEY_UP) && player2.getY() >= 0) {
-			positionP2[1]--;
+			positionP2[1] = positionP2[1] - (float)(playerSpeed);
 			player2.setLocation(positionP2[0], positionP2[1]);
 		}
 		if(input.isKeyDown(Input.KEY_ESCAPE)){
@@ -128,12 +137,14 @@ public class StartGame extends BasicGame {
 		 ********************/
 		// Bounce back from the paddle.
 		if (ball.intersects(player1)) {
-			ballDx = Math.cos( getBounceAngle(player1) );
-			ballDy = -Math.sin( getBounceAngle(player1) );
+			ballDx = ballSpeed * Math.cos( getBounceAngle(player1) );
+			ballDy = ballSpeed * -Math.sin( getBounceAngle(player1) );
+			ballSpeed += increasePerBounce;
 			//			System.out.println("Bounce Player 1");
 		} else if (ball.intersects(player2)) {
-			ballDx = -Math.cos( getBounceAngle(player2) );
-			ballDy = -Math.sin( getBounceAngle(player2) );
+			ballDx = ballSpeed * -Math.cos( getBounceAngle(player2) );
+			ballDy = ballSpeed * -Math.sin( getBounceAngle(player2) );
+			ballSpeed += increasePerBounce;
 			//			System.out.println("Bounce Player 2");
 		}
 
@@ -191,7 +202,7 @@ public class StartGame extends BasicGame {
 		try {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new StartGame("PONG"));
-			appgc.setTargetFrameRate(200);
+			appgc.setTargetFrameRate(60);
 			appgc.setDisplayMode(800, 600, false);
 			appgc.start();
 		} catch (SlickException ex) {
