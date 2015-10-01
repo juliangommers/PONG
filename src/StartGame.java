@@ -38,8 +38,8 @@ public class StartGame extends BasicGame {
 	// Maximum bounce off angle (now 75º)
 	private static double MAXBOUNCEANGLE = 5 * Math.PI/12;
 
-	// Starting direction of the ball
-	private double ballDx = 1;
+	// Starting direction of the ball (starts with random side)
+	private double ballDx = (Math.random() <= 0.5) ? 1 : -1;
 	private double ballDy = 0;
 
 	/**
@@ -50,12 +50,31 @@ public class StartGame extends BasicGame {
 		super(gamename);
 	}
 
-	public double getBounceAngle(Shape player){
+	/**
+	 * Calculate the angle the ball will bounce off from.<br />
+	 * This is calculated in the following steps:
+	 * <ol>
+	 * <li>Calculate the position of the paddles' middle. </li>
+	 * <li>Subtract the balls' position from the paddles' middle position. </li>
+	 * <li>Normalise the intersection point (creates a percentage). </li>
+	 * <li>Calculate the angle based on the maximum bounce off angle. </li>
+	 * </ol>
+	 * @param player The player from which the ball should bounce away.
+	 * @return The directions' angle (in radiants).
+	 */
+	private double getBounceAngle(Shape player){
 		double paddleMiddle = (player.getY() + (player.getHeight()/2));
 		double relativeIntersection = paddleMiddle - ball.getY();
 		double normalisedrelativeIntersection = (relativeIntersection/(player1.getHeight()/2));
 		double bounceAngle = normalisedrelativeIntersection * MAXBOUNCEANGLE;
 		return bounceAngle;
+	}
+
+	private void resetBall(GameContainer container, int direction){
+		positionBall[0] = (float) (container.getWidth()/2.0);
+		positionBall[1] = (float) (container.getHeight()/2.0);
+		ballDx = direction;
+		ballDy = 0;
 	}
 
 	/**
@@ -67,7 +86,7 @@ public class StartGame extends BasicGame {
 		player1 = new Rectangle(positionP1[0], positionP1[1], 25, 200);
 		player2 = new Rectangle(positionP2[0], positionP2[1], 25, 200);
 		ball = new Circle(positionBall[0], positionBall[1], 10);
-		font = new Font("Verdana", Font.BOLD,30);
+		font = new Font("Verdana", Font.BOLD, 30);
 		ttf = new TrueTypeFont(font, true);
 	}
 
@@ -100,6 +119,9 @@ public class StartGame extends BasicGame {
 			positionP2[1]--;
 			player2.setLocation(positionP2[0], positionP2[1]);
 		}
+		if(input.isKeyDown(Input.KEY_ESCAPE)){
+			container.exit();
+		}
 
 		/********************
 		 * BOUNCE MECHANISM *
@@ -108,34 +130,37 @@ public class StartGame extends BasicGame {
 		if (ball.intersects(player1)) {
 			ballDx = Math.cos( getBounceAngle(player1) );
 			ballDy = -Math.sin( getBounceAngle(player1) );
-			System.out.println("Bounce Player 1");
+			//			System.out.println("Bounce Player 1");
 		} else if (ball.intersects(player2)) {
 			ballDx = -Math.cos( getBounceAngle(player2) );
 			ballDy = -Math.sin( getBounceAngle(player2) );
-			System.out.println("Bounce Player 2");
+			//			System.out.println("Bounce Player 2");
 		}
 
-		/********************
+		// Bounce off the edges
+		if(ball.getY() <= 0 || ball.getY() >= container.getHeight()){
+			ballDy = -ballDy;
+		}
+
+		/*********************
 		 * SCORES INDICATION *
 		 *********************/
 		// Keep the scores up to date
-		if (ball.getMaxX() >= container.getWidth()) {
-			scores[0]++;
-			System.out.println("P1: " + scores[0] + " score P2: " + scores[1]);
-			positionBall[0] = 400;
-			positionBall[1] = 300;
-		} else if (ball.getX() == 0) {
+		if (ball.getX() <= 0.0) {
 			scores[1]++;
-			System.out.println("P1: " + scores[0] + " score P2: " + scores[1]);
-			positionBall[0] = 400;
-			positionBall[1] = 300;
+			System.out.println("Score P1: " + scores[0] + " Score P2: " + scores[1]);
+			resetBall(container, -1);
+		}else if (ball.getX() >= (float)container.getWidth()) {
+			scores[0]++;
+			System.out.println("Score P1: " + scores[0] + " Score P2: " + scores[1]);
+			resetBall(container, 1);
 		}
 
 		/***********
 		 * MOVEMENT *
 		 ************/
 		// Add the Dx or Dy to the coordinate
-		if (ball.getX() >= 0 && ball.getX() <= (container.getWidth()) - ball.getWidth()) {
+		if (ball.getX() >= 0 && ball.getX() <= container.getWidth()) {
 			positionBall[0] += ballDx;
 			positionBall[1] += ballDy;
 		}
@@ -159,6 +184,7 @@ public class StartGame extends BasicGame {
 		g.fill(ball);
 		g.drawLine(400, 0, 400, 600);
 		ttf.drawString(positionTextbox[0], positionTextbox[1], scores[0] + " - " + scores[1]);
+
 	}
 
 	public static void main(String[] args) {
