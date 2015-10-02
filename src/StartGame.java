@@ -122,21 +122,21 @@ public class StartGame extends BasicGame {
 		 **********************/
 		Input input = container.getInput();
 		// Player interaction of Player 1
-		if (input.isKeyDown(Input.KEY_S) && player1.getY() <= (container.getHeight() - player1.getHeight())) {
+		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() <= container.getHeight()) {
 			positionP1[1] = positionP1[1] + (float)(playerSpeed);
 			player1.setLocation(positionP1[0], positionP1[1]);
 		}
-		if (input.isKeyDown(Input.KEY_W) && player1.getY() >= 0) {
+		if (input.isKeyDown(Input.KEY_W) && player1.getMinY() >= 0) {
 			positionP1[1] = positionP1[1] - (float)(playerSpeed);
 			player1.setLocation(positionP1[0], positionP1[1]);
 		}
 
 		// Player interaction of Player 2
-		if (input.isKeyDown(Input.KEY_DOWN) && player2.getY() <= (container.getHeight() - player2.getHeight())) {
+		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() <= container.getHeight()) {
 			positionP2[1] = positionP2[1] + (float)(playerSpeed);
 			player2.setLocation(positionP2[0], positionP2[1]);
 		}
-		if (input.isKeyDown(Input.KEY_UP) && player2.getY() >= 0) {
+		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() >= 0) {
 			positionP2[1] = positionP2[1] - (float)(playerSpeed);
 			player2.setLocation(positionP2[0], positionP2[1]);
 		}
@@ -161,7 +161,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// Bounce off the edges
-		if(ball.getY() <= 0 || ball.getY() >= container.getHeight()){
+		if(ball.getMinY() <= 0 || ball.getMaxY() >= container.getHeight()){
 			ballDy = -ballDy;
 		}
 
@@ -169,13 +169,11 @@ public class StartGame extends BasicGame {
 		 * SCORES INDICATION *
 		 *********************/
 		// Keep the scores up to date
-		if (ball.getX() <= 0.0) {
+		if (ball.getMinX() <= 0.0) {
 			scores[1]++;
-			System.out.println("Score P1: " + scores[0] + " Score P2: " + scores[1]);
 			resetBall(container, -1);
-		}else if (ball.getX() >= (float)container.getWidth()) {
+		}else if (ball.getMaxX() >= (float)container.getWidth()) {
 			scores[0]++;
-			System.out.println("Score P1: " + scores[0] + " Score P2: " + scores[1]);
 			resetBall(container, 1);
 		}
 
@@ -183,11 +181,13 @@ public class StartGame extends BasicGame {
 		 * MOVEMENT *
 		 ************/
 		// Add the Dx or Dy to the coordinate
-		if (ball.getX() >= 0 && ball.getX() <= container.getWidth()) {
+		if (ball.getMinX() >= 0 && ball.getMaxX() <= container.getWidth()) {
 			positionBall[0] += ballDx;
 			positionBall[1] += ballDy;
 		}
-		ball.setLocation(positionBall[0], positionBall[1]);
+                ball.setCenterX(positionBall[0]);
+                ball.setCenterY(positionBall[1]);
+//		ball.setLocation(positionBall[0], positionBall[1]);
 	}
 
 	/**
@@ -221,6 +221,8 @@ public class StartGame extends BasicGame {
 			appgc = new AppGameContainer(new StartGame("PONG"));
 			appgc.setTargetFrameRate(60);
 			appgc.setDisplayMode(contWidth, contHeight, false);
+                        appgc.setAlwaysRender(true);
+                        appgc.setVSync(true);
 			appgc.start();
 		} catch (SlickException ex) {
 			Logger.getLogger(StartGame.class.getName()).log(Level.SEVERE, null, ex);
