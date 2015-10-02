@@ -94,7 +94,7 @@ public class StartGame extends BasicGame {
 	
 	private void dashedLine(Graphics g){
 		for (int i = 0; i < contHeight; i+=25) {
-			g.drawLine(contWidth / 2, i, contWidth / 2, (float) (i+12.5));
+			g.drawLine(contWidth / 2, i, contWidth / 2, (float)(i+12.5));
 		}
 	}
 
@@ -199,13 +199,15 @@ public class StartGame extends BasicGame {
 		g.draw(player1);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(player1);
+		
 		g.draw(player2);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(player2);
+		
 		g.draw(ball);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(ball);
-//		g.drawLine(contWidth/2, 0, contWidth/2, contHeight);
+		
 		dashedLine(g);
 		
 		ttf.drawString(positionScoreP1[0]-10, positionScoreP1[1], Integer.toString(scores[0]));
