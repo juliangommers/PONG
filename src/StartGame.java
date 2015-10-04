@@ -10,6 +10,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Shape;
 
@@ -31,6 +32,10 @@ public class StartGame extends BasicGame {
 	
 	// Load the info screens
 	private InfoText info = new InfoText();
+	
+	// Load sounds
+	private Sound plop;
+	private Sound beep;
 
 	// Speed settings
 	private double increasePerBounce = 0.25;
@@ -79,6 +84,9 @@ public class StartGame extends BasicGame {
 		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
 		info.scoreFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 30) , true);
 		info.pauseFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 60) , true);
+		container.setSoundVolume(1.0f);
+		plop = new Sound("media/8bit_plop.wav");
+		beep = new Sound("media/8bit_beep.wav");
 	}
 
 	/**
@@ -129,10 +137,12 @@ public class StartGame extends BasicGame {
 		 ********************/
 		// Bounce back from the paddle.
 		if (ball.ball.intersects(player1.getPlayer())) {
+			plop.play();
 			ball.setBallDx( ball.getBallSpeed() * Math.cos( getBounceAngle(player1.getPlayer()) ) );
 			ball.setBallDy( ball.getBallSpeed() * -Math.sin( getBounceAngle(player1.getPlayer()) ) );
 			ball.setBallSpeed(ball.getBallSpeed() + increasePerBounce);
 		} else if (ball.ball.intersects(player2.getPlayer())) {
+			plop.play();
 			ball.setBallDx( ball.getBallSpeed() * -Math.cos( getBounceAngle(player2.getPlayer()) ) );
 			ball.setBallDy( ball.getBallSpeed() * -Math.sin( getBounceAngle(player2.getPlayer()) ) );
 			ball.setBallSpeed(ball.getBallSpeed() + increasePerBounce);
@@ -149,9 +159,11 @@ public class StartGame extends BasicGame {
 		 *********************/
 		// Keep the scores up to date
 		if (ball.getMinX() <= 0.0) {
+			beep.play();
 			scores.increaseScoreP2();
 			ball.resetBall(-1);
 		}else if (ball.getMaxX() >= (float)contWidth) {
+			beep.play();
 			scores.increaseScoreP1();
 			ball.resetBall(1);
 		}
