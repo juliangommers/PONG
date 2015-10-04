@@ -20,7 +20,7 @@ public class StartGame extends BasicGame {
 	// Window settings
 	private static int contHeight = 600;
 	private static int contWidth = 800;
-	
+
 	// Players and Ball
 	private Shape player1 = null;
 	private Shape player2 = null;
@@ -39,6 +39,7 @@ public class StartGame extends BasicGame {
 	private float[] positionScoreP2 = {contWidth/2+50, 50};
 	private Font font;
 	private TrueTypeFont ttf;
+	private TrueTypeFont ttf_big;
 
 	// Maximum bounce off angle (now 75º)
 	private static double MAXBOUNCEANGLE = 5 * Math.PI/12;
@@ -89,9 +90,9 @@ public class StartGame extends BasicGame {
 		ballSpeed = 5;
 		ballDx = direction*ballSpeed;
 		ballDy = 0;
-		
+
 	}
-	
+
 	private void dashedLine(Graphics g){
 		for (int i = 0; i < contHeight; i+=25) {
 			g.drawLine(contWidth / 2, i, contWidth / 2, (float)(i+12.5));
@@ -109,6 +110,7 @@ public class StartGame extends BasicGame {
 		ball = new Circle(positionBall[0], positionBall[1], 10);
 		font = new Font("Verdana", Font.BOLD, 30);
 		ttf = new TrueTypeFont(font, true);
+		ttf_big = new TrueTypeFont(new Font("Verdana", Font.BOLD, 60), true);
 	}
 
 	/**
@@ -143,6 +145,13 @@ public class StartGame extends BasicGame {
 		if(input.isKeyDown(Input.KEY_ESCAPE)){
 			container.exit();
 		}
+		if(input.isKeyPressed(Input.KEY_P)){
+//			if(!container.isPaused())
+//				container.pause();
+//			else
+//				container.resume();
+			container.setPaused(!container.isPaused());
+		}
 
 		/********************
 		 * BOUNCE MECHANISM *
@@ -161,7 +170,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// Bounce off the edges
-		if(ball.getMinY() <= 0 || ball.getMaxY() >= container.getHeight()){
+		if(ball.getMinY() <= 0.0 || ball.getMaxY() >= (float)container.getHeight()){
 			ballDy = -ballDy;
 		}
 
@@ -169,7 +178,7 @@ public class StartGame extends BasicGame {
 		 * SCORES INDICATION *
 		 *********************/
 		// Keep the scores up to date
-		if (ball.getMinX() <= 0.0) {
+		if (ball.getMinX() <= (float) 0) {
 			scores[1]++;
 			resetBall(container, -1);
 		}else if (ball.getMaxX() >= (float)container.getWidth()) {
@@ -177,17 +186,17 @@ public class StartGame extends BasicGame {
 			resetBall(container, 1);
 		}
 
-		/***********
+		/************
 		 * MOVEMENT *
 		 ************/
 		// Add the Dx or Dy to the coordinate
-		if (ball.getMinX() >= 0 && ball.getMaxX() <= container.getWidth()) {
+		if (ball.getMinX() >= 0 && ball.getMaxX() <= container.getWidth() && !container.isPaused()) {
 			positionBall[0] += ballDx;
 			positionBall[1] += ballDy;
 		}
-                ball.setCenterX(positionBall[0]);
-                ball.setCenterY(positionBall[1]);
-//		ball.setLocation(positionBall[0], positionBall[1]);
+		ball.setCenterX(positionBall[0]);
+		ball.setCenterY(positionBall[1]);
+		//		ball.setLocation(positionBall[0], positionBall[1]);
 	}
 
 	/**
@@ -199,20 +208,25 @@ public class StartGame extends BasicGame {
 		g.draw(player1);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(player1);
-		
+
 		g.draw(player2);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(player2);
-		
+
 		g.draw(ball);
 		g.setColor(new Color(255, 255, 255));
 		g.fill(ball);
-		
+
 		dashedLine(g);
-		
+
 		ttf.drawString(positionScoreP1[0]-10, positionScoreP1[1], Integer.toString(scores[0]));
 		ttf.drawString(positionScoreP2[0]-10, positionScoreP2[1], Integer.toString(scores[1]));
 		
+		String pauseString = "PAUSE";
+		
+		if(container.isPaused())
+			ttf_big.drawString((container.getWidth()/2f)-(ttf_big.getWidth(pauseString)/2f), (container.getHeight()/2f)-(ttf_big.getHeight()/2f), pauseString);
+
 	}
 
 	public static void main(String[] args) {
@@ -221,8 +235,8 @@ public class StartGame extends BasicGame {
 			appgc = new AppGameContainer(new StartGame("PONG"));
 			appgc.setTargetFrameRate(60);
 			appgc.setDisplayMode(contWidth, contHeight, false);
-                        appgc.setAlwaysRender(true);
-                        appgc.setVSync(true);
+			appgc.setAlwaysRender(true);
+			appgc.setVSync(true);
 			appgc.start();
 		} catch (SlickException ex) {
 			Logger.getLogger(StartGame.class.getName()).log(Level.SEVERE, null, ex);
