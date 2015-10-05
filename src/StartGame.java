@@ -83,7 +83,7 @@ public class StartGame extends BasicGame {
 		player1 = new Player(contWidth/10f, contHeight/3f);
 		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
 		info.scoreFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 30) , true);
-		info.pauseFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 60) , true);
+		info.pauseFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 52) , true);
 		container.setSoundVolume(1.0f);
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
