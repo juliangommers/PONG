@@ -9,9 +9,9 @@ public class Player {
 
 	private double playerSpeed = 5;
 	private Shape player = null;
-	
+
 	private float[] position = {0,0};
-	
+
 	/**
 	 * @return the player
 	 */
@@ -25,15 +25,19 @@ public class Player {
 		this.position[1] = y;
 		player = new Rectangle(x, y, contWidth/40f, contHeight/3f);
 	}
-	
+
 	public void up(){
-		position[1] = position[1] - (float)(playerSpeed);
-		player.setLocation(this.position[0], this.position[1]);
+		if(player.getMinY() > 0){
+			position[1] = position[1] - (float)(playerSpeed);
+			player.setLocation(this.position[0], this.position[1]);
+		}
 	}
-	
+
 	public void down(){
-		position[1] = position[1] + (float)(playerSpeed);
-		player.setLocation(this.position[0], this.position[1]);
+		if(player.getMaxY() < contHeight){
+			position[1] = position[1] + (float)(playerSpeed);
+			player.setLocation(this.position[0], this.position[1]);
+		}
 	}
 
 	public float getHeight() {
@@ -55,7 +59,7 @@ public class Player {
 	public float getY(){
 		return position[0];
 	}
-	
+
 	public void setX(float x){
 		player.setX(x);
 		this.position[0] = x;
@@ -65,21 +69,29 @@ public class Player {
 		player.setY(y);
 		this.position[1] = y;
 	}
-	
+
 	public float getMaxX(){
 		return player.getMaxX();
 	}
-	
+
 	public float getMinX(){
 		return player.getMinX();
 	}
-	
+
 	public float getMaxY(){
 		return player.getMaxY();
 	}
-	
+
 	public float getMinY(){
 		return player.getMinY();
+	}
+
+	public float getCenterX(){
+		return player.getCenterX();
+	}
+
+	public float getCenterY(){
+		return player.getCenterY();
 	}
 
 	/**
