@@ -32,8 +32,8 @@ public class Ball {
 	 * @param direction The direction the ball should take.
 	 */
 	public void resetBall(double direction){
-		this.setX(contWidth/2f);
-		this.setY(contHeight/2f);
+		this.setCenterX(contWidth/2f);
+		this.setCenterY(contHeight/2f);
 		ballSpeed = 5;
 		ballDx = direction * ballSpeed;
 		ballDy = 0;
