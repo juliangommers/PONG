@@ -193,7 +193,7 @@ public class StartGame extends BasicGame {
 		/**************************
 		 * ARTIFICIAL INTELIGENCE *
 		 **************************/
-		if(this.gameStarted && this.gameType == 2 && ball.getBallDx() <= 0 && !container.isPaused()){
+		if(this.gameStarted && this.gameType == 1 && ball.getBallDx() <= 0 && !container.isPaused()){
 			if(ball.getCenterY() < player1.getCenterY()){
 				player1.up();
 			}
