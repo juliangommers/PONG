@@ -22,23 +22,25 @@ public class StartGame extends BasicGame {
 
 	// Load the ball
 	Ball ball = new Ball();
-	
+
 	// Load the scores
 	Scores scores = new Scores();
-	
+
 	// Load the players
 	private Player player1;
 	private Player player2;
-	
+
 	// Load the info screens
 	private InfoText info = new InfoText();
-	
+
 	// Load sounds
 	private Sound plop;
 	private Sound beep;
 
 	// Speed settings
 	private double increasePerBounce = 0.25;
+	
+	private boolean gameStarted = false;
 
 	/**
 	 * Constructor of StartGame
@@ -82,11 +84,14 @@ public class StartGame extends BasicGame {
 		container.setShowFPS(false);
 		player1 = new Player(contWidth/10f, contHeight/3f);
 		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
-		info.scoreFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 30) , true);
-		info.pauseFont = new TrueTypeFont( new Font("Verdana", Font.BOLD, 60) , true);
-		container.setSoundVolume(1.0f);
+		Font font = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
+		Font fontb = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
+		info.scoreFont 	= new TrueTypeFont( font , true);
+		info.pauseFont 	= new TrueTypeFont( fontb , true);
+		info.pongFont 	= new TrueTypeFont( fontb , true);
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
+		container.pause();
 	}
 
 	/**
@@ -106,7 +111,7 @@ public class StartGame extends BasicGame {
 		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() < contHeight && !container.isPaused()) {
 			player1.down();
 		}
-		
+
 		// Player interaction of Player 2
 		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() > 0 && !container.isPaused()) {
 			player2.up();
@@ -114,7 +119,7 @@ public class StartGame extends BasicGame {
 		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() < contHeight && !container.isPaused()) {
 			player2.down();
 		}
-		
+
 		// User can exit the game
 		if(input.isKeyDown(Input.KEY_ESCAPE)){
 			container.exit();
@@ -129,6 +134,12 @@ public class StartGame extends BasicGame {
 		// Display FPS by pressing 1
 		if(input.isKeyPressed(Input.KEY_1)){
 			container.setShowFPS(!container.isShowingFPS());
+		}
+		
+		// User can exit the game
+		if(input.isKeyDown(Input.KEY_SPACE)){
+			this.gameStarted = true;
+			container.resume();
 		}
 
 
@@ -206,9 +217,13 @@ public class StartGame extends BasicGame {
 
 		// Show the scores on the screen
 		info.scores(scores);
+		
+		// Show the start screen at the beginning of the game
+		if(!this.gameStarted)
+			info.startScreen();
 
 		// Show the pause screen when the game is paused
-		if(container.isPaused())
+		if(container.isPaused() && this.gameStarted)
 			info.pauseScreen();
 
 	}
