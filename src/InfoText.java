@@ -20,6 +20,7 @@ public class InfoText {
 	TrueTypeFont scoreFont;
 	TrueTypeFont pauseFont;
 	TrueTypeFont pongFont;
+	TrueTypeFont playerFont;
 
 	public InfoText(){
 	}
@@ -53,5 +54,14 @@ public class InfoText {
 
 	public void startScreen(){
 		pongFont.drawString((contWidth/2f)-(pongFont.getWidth("PONG")/2f), (contHeight/10f)-(pongFont.getHeight()/2f), "PONG");
+		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("1- SINGLE PLAYER")/2f), (contHeight/10f)*5-(scoreFont.getHeight()/2f), "1- SINGLE PLAYER");
+		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("2- MULTI PLAYER")/2f), (contHeight/10f)*6-(scoreFont.getHeight()/2f), "2- MULTI PLAYER");
+		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("3- INSANE 2P")/2f), (contHeight/10f)*7-(scoreFont.getHeight()/2f), "3- INSANE 2P");
+		playerFont.drawString((contWidth/20f), (contHeight/20f)*17-(playerFont.getHeight()/2f), "P1");
+		playerFont.drawString((contWidth/20f), (contHeight/20f)*18-(playerFont.getHeight()/2f), "W - up");
+		playerFont.drawString((contWidth/20f), (contHeight/20f)*19-(playerFont.getHeight()/2f), "S - down");
+		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("P2"), (contHeight/20f)*17-(playerFont.getHeight()/2f), "P2");
+		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("UP - up"), (contHeight/20f)*18-(playerFont.getHeight()/2f), "UP - up");
+		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("DOWN - down"), (contHeight/20f)*19-(playerFont.getHeight()/2f), "DOWN - down");
 	}
 }

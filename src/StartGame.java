@@ -39,8 +39,9 @@ public class StartGame extends BasicGame {
 
 	// Speed settings
 	private double increasePerBounce = 0.25;
-	
+
 	private boolean gameStarted = false;
+	private int gameType;
 
 	/**
 	 * Constructor of StartGame
@@ -84,11 +85,13 @@ public class StartGame extends BasicGame {
 		container.setShowFPS(false);
 		player1 = new Player(contWidth/10f, contHeight/3f);
 		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
-		Font font = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
-		Font fontb = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
-		info.scoreFont 	= new TrueTypeFont( font , true);
-		info.pauseFont 	= new TrueTypeFont( fontb , true);
-		info.pongFont 	= new TrueTypeFont( fontb , true);
+		Font font20 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 20);
+		Font font30 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
+		Font font50 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
+		info.playerFont			= new TrueTypeFont( font20 , true);
+		info.scoreFont 			= new TrueTypeFont( font30 , true);
+		info.pauseFont 			= new TrueTypeFont( font50 , true);
+		info.pongFont 			= new TrueTypeFont( font50 , true);
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
 		container.pause();
@@ -105,18 +108,18 @@ public class StartGame extends BasicGame {
 		 **********************/
 		Input input = container.getInput();
 		// Player interaction of Player 1
-		if (input.isKeyDown(Input.KEY_W) && player1.getMinY() > 0 && !container.isPaused()) {
+		if (input.isKeyDown(Input.KEY_W) && player1.getMinY() > 0 && !container.isPaused() && this.gameStarted && this.gameType != 1 && (this.gameType == 2 || this.gameType == 3)) {
 			player1.up();
 		}
-		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() < contHeight && !container.isPaused()) {
+		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() < contHeight && !container.isPaused() && this.gameStarted && this.gameType != 1 && (this.gameType == 2 || this.gameType == 3)) {
 			player1.down();
 		}
 
 		// Player interaction of Player 2
-		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() > 0 && !container.isPaused()) {
+		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() > 0 && !container.isPaused() && this.gameStarted) {
 			player2.up();
 		}
-		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() < contHeight && !container.isPaused()) {
+		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() < contHeight && !container.isPaused() && this.gameStarted) {
 			player2.down();
 		}
 
@@ -127,17 +130,25 @@ public class StartGame extends BasicGame {
 
 		// User can pause the game
 		if(input.isKeyPressed(Input.KEY_P)){
-			container.setPaused(!container.isPaused());
+			if(this.gameStarted)
+				container.setPaused(!container.isPaused());
 		}
-
 
 		// Display FPS by pressing 1
 		if(input.isKeyPressed(Input.KEY_1)){
 			container.setShowFPS(!container.isShowingFPS());
 		}
-		
+
 		// User can exit the game
-		if(input.isKeyDown(Input.KEY_SPACE)){
+		if(input.isKeyDown(Input.KEY_1)){
+			this.gameType = 1;
+			this.gameStarted = true;
+			container.resume();
+		}
+
+		// User can exit the game
+		if(input.isKeyDown(Input.KEY_2)){
+			this.gameType = 2;
 			this.gameStarted = true;
 			container.resume();
 		}
@@ -184,12 +195,12 @@ public class StartGame extends BasicGame {
 		 * MOVEMENT *
 		 ************/
 		// Add the Dx or Dy to the coordinate
-		if (ball.getMinX() >= 0 && ball.getMaxX() <= contWidth && !container.isPaused()) {
+		if (ball.getMinX() >= 0 && ball.getMaxX() <= contWidth && !container.isPaused() && this.gameStarted) {
 			float x = (float) ( ball.getX() + ball.getBallDx() );
 			float y = (float) ( ball.getY() + ball.getBallDy() );
 			ball.setX( x );
 			ball.setY( y );
-		}else if(!container.isPaused()){
+		}else if(!container.isPaused() && this.gameStarted){
 			ball.setCenterX((float) ball.getX());
 			ball.setCenterY((float) ball.getY());
 		}
@@ -201,23 +212,25 @@ public class StartGame extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 
-		g.draw(player1.getPlayer());
-		g.setColor(new Color(255, 255, 255));
-		g.fill(player1.getPlayer());
+		if(this.gameStarted){
+			g.draw(player1.getPlayer());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(player1.getPlayer());
 
-		g.draw(player2.getPlayer());
-		g.setColor(new Color(255, 255, 255));
-		g.fill(player2.getPlayer());
+			g.draw(player2.getPlayer());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(player2.getPlayer());
 
-		g.draw(ball.getBall());
-		g.setColor(new Color(255, 255, 255));
-		g.fill(ball.getBall());
+			g.draw(ball.getBall());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(ball.getBall());
 
-		dashedLine(g);
+			dashedLine(g);
 
-		// Show the scores on the screen
-		info.scores(scores);
-		
+			// Show the scores on the screen
+			info.scores(scores);
+
+		}
 		// Show the start screen at the beginning of the game
 		if(!this.gameStarted)
 			info.startScreen();
