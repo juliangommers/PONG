@@ -152,6 +152,21 @@ public class Ball {
 	public double getMaxY() {
 		return ball.getMaxY();
 	}
+	
+	/**
+	 *
+	 */
+	public float getCenterX() {
+		return ball.getCenterX();
+	}
+
+	/**
+	 * @return 
+	 *
+	 */
+	public float getCenterY() {
+		return ball.getCenterY();
+	}
 
 	/**
 	 * @param x

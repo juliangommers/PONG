@@ -190,6 +190,18 @@ public class StartGame extends BasicGame {
 			ball.resetBall(1);
 		}
 
+		/**************************
+		 * ARTIFICIAL INTELIGENCE *
+		 **************************/
+		if(this.gameStarted && this.gameType == 2){
+			if(ball.getCenterY() < player1.getCenterY()){
+				player1.up();
+			}
+			if(ball.getCenterY() > player1.getCenterY()){
+				player1.down();
+			}
+		}
+
 
 		/************
 		 * MOVEMENT *
