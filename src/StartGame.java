@@ -43,6 +43,8 @@ public class StartGame extends BasicGame {
 	private boolean gameStarted = false;
 	private int gameType;
 
+	int currentFrame = 0;
+
 	/**
 	 * Constructor of StartGame
 	 * @param gamename The name of the game.
@@ -134,23 +136,57 @@ public class StartGame extends BasicGame {
 				container.setPaused(!container.isPaused());
 		}
 
+		// User can reset the game
+		if(input.isKeyPressed(Input.KEY_R)){
+			if(this.gameStarted){
+				container.setPaused(true);
+				this.gameType = 0;
+				this.gameStarted = false;
+				player1.setX(contWidth/10f);
+				player1.setY(contHeight/3f);
+				player2.setX(((contWidth/10f)*9)-(contWidth/40f));
+				player2.setY(contHeight/3f);
+				ball.setBallDx(0);
+				ball.setBallDy(0);
+				ball.resetBall((Math.random() <= 0.5) ? 1 : -1);
+				container.setVSync(true);
+				container.setTargetFrameRate(60);
+				scores.setScores( new int[]{0,0} );
+			}
+		}
+
 		// Display FPS by pressing 1
-		if(input.isKeyPressed(Input.KEY_1)){
+		if(input.isKeyPressed(Input.KEY_0)){
 			container.setShowFPS(!container.isShowingFPS());
 		}
 
-		// User can exit the game
+		// Single game
 		if(input.isKeyDown(Input.KEY_1)){
-			this.gameType = 1;
-			this.gameStarted = true;
-			container.resume();
+			if(!this.gameStarted){
+				this.gameType = 1;
+				this.gameStarted = true;
+				container.resume();
+			}
 		}
 
-		// User can exit the game
+		// Multi player game
 		if(input.isKeyDown(Input.KEY_2)){
-			this.gameType = 2;
-			this.gameStarted = true;
-			container.resume();
+			if(!this.gameStarted){
+				this.gameType = 2;
+				this.gameStarted = true;
+				container.resume();
+			}
+		}
+
+		// Insane mode
+		if(input.isKeyDown(Input.KEY_3)){
+			if(!this.gameStarted){
+				this.gameType = 3;
+				this.gameStarted = true;
+				container.setVSync(false);
+				container.setTargetFrameRate(Integer.MAX_VALUE);
+				container.resume();
+			}
 		}
 
 
@@ -193,12 +229,26 @@ public class StartGame extends BasicGame {
 		/**************************
 		 * ARTIFICIAL INTELIGENCE *
 		 **************************/
-		if(this.gameStarted && this.gameType == 1 && ball.getBallDx() <= 0 && !container.isPaused()){
+		if(this.gameStarted && (this.gameType == 1 || this.gameType == 3) && ball.getBallDx() <= 0 && !container.isPaused() && currentFrame != 8){
 			if(ball.getCenterY() < player1.getCenterY()){
 				player1.up();
 			}
 			if(ball.getCenterY() > player1.getCenterY()){
 				player1.down();
+			}
+		}
+
+		if(currentFrame < 8)
+			currentFrame++;
+		else
+			currentFrame = 0;
+
+		if(this.gameStarted && this.gameType == 3 && ball.getBallDx() >= 0 && !container.isPaused()){
+			if(ball.getCenterY() < player2.getCenterY()){
+				player2.up();
+			}
+			if(ball.getCenterY() > player2.getCenterY()){
+				player2.down();
 			}
 		}
 

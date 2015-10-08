@@ -5,6 +5,13 @@ public class Scores {
 	private int[] scores = {0,0};
 	
 	/**
+	 * @param scores the scores to set
+	 */
+	public void setScores(int[] scores) {
+		this.scores = scores;
+	}
+
+	/**
 	 * @return the scores
 	 */
 	public int[] getScors() {
