@@ -181,4 +181,53 @@ public class Ball {
 	public void setCenterY(float y) {
 		ball.setCenterY(y);
 	}
+	
+	/**
+	 * @param player 
+	 *
+	 */
+	public float predictY(Player player) {
+//		System.out.println("Prediction:");
+		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
+//		System.out.println("a= "+a);
+		float b = ( this.getCenterY() - a * this.getCenterX() );
+//		System.out.println("b= "+b);
+		float predictY = a * player.getCenterX() + b;
+//		System.out.println("predictY= "+predictY);
+		return predictY;
+	}
+	
+	public float linIntersectY(float x) {
+		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
+		float b = ( this.getCenterY() - a * this.getCenterX() );
+		float y = a * x + b;
+		return y;
+	}
+	
+	public float linIntersectX(float y) {
+		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
+		float b = ( this.getCenterY() - a * this.getCenterX() );
+		float x = (y-b)/a;
+		return x;
+	}
+	
+	public float linEq(float xPoint, float yPoint, float xEnd) {
+		float a = (float)(-this.getBallDy()) / (float)(this.getBallDx());
+		float b = ( yPoint - a * xPoint );
+		float y = a * xEnd + b;
+		return y;
+	}
+	
+	public String toString(Player player){
+		String output = "Ball: \n"
+				+ "X=" + this.getCenterX() +"\n"
+				+ "Y=" + this.getCenterY() +"\n"
+				+ "Dx=" + this.getBallDx() +"\n"
+				+ "Dy=" + this.getBallDy() +"\n"
+				+ "Dx/Dy=" + this.getBallDx()/this.getBallDy() +"\n"
+				+ "b=" + ( this.getCenterY() - (float)(this.getBallDx()) / (float)(-this.getBallDy()) * this.getCenterX() ) +"\n"
+				+ "PredictedY=" + this.predictY(player) +"\n"
+				;
+		return output;
+	}
 }
