@@ -266,6 +266,8 @@ public class StartGame extends BasicGame {
 			ball.setCenterX((float) ball.getX());
 			ball.setCenterY((float) ball.getY());
 		}
+
+		//		System.out.println(ball.toString(player1));
 	}
 
 	/**
@@ -288,11 +290,22 @@ public class StartGame extends BasicGame {
 			g.fill(ball.getBall());
 
 			dashedLine(g);
+			
 
 			// Show the scores on the screen
 			info.scores(scores);
 
+			if(ball.getBallDx() <= 0){
+				info.predictY(player1, ball);
+				g.drawLine(player1.getCenterX(), ball.predictY(player1), ball.getCenterX(), ball.getCenterY());
+			}
+			if(ball.getBallDx() >= 0){
+				info.predictY(player2, ball);
+				g.drawLine(player2.getCenterX(), ball.predictY(player2), ball.getCenterX(), ball.getCenterY());
+			}
+
 		}
+
 		// Show the start screen at the beginning of the game
 		if(!this.gameStarted)
 			info.startScreen();
