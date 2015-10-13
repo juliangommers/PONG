@@ -126,7 +126,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// User can exit the game
-		if(input.isKeyDown(Input.KEY_ESCAPE)){
+		if(input.isKeyPressed(Input.KEY_ESCAPE)){
 			container.exit();
 		}
 
@@ -161,7 +161,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// Single game
-		if(input.isKeyDown(Input.KEY_1)){
+		if(input.isKeyPressed(Input.KEY_1)){
 			if(!this.gameStarted){
 				this.gameType = 1;
 				this.gameStarted = true;
@@ -170,7 +170,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// Multi player game
-		if(input.isKeyDown(Input.KEY_2)){
+		if(input.isKeyPressed(Input.KEY_2)){
 			if(!this.gameStarted){
 				this.gameType = 2;
 				this.gameStarted = true;
@@ -179,7 +179,7 @@ public class StartGame extends BasicGame {
 		}
 
 		// Insane mode
-		if(input.isKeyDown(Input.KEY_3)){
+		if(input.isKeyPressed(Input.KEY_3)){
 			if(!this.gameStarted){
 				this.gameType = 3;
 				this.gameStarted = true;
@@ -187,6 +187,17 @@ public class StartGame extends BasicGame {
 				container.setTargetFrameRate(Integer.MAX_VALUE);
 				container.resume();
 			}
+		}
+
+		// Show prediction
+		if(input.isKeyPressed(Input.KEY_8)){
+			info.prediction = !info.prediction;
+		}
+
+		// Show prediction traces
+		if(input.isKeyPressed(Input.KEY_9)){
+			info.prediction = !info.prediction;
+			info.predictionTraces = !info.predictionTraces;
 		}
 
 
@@ -290,18 +301,18 @@ public class StartGame extends BasicGame {
 			g.fill(ball.getBall());
 
 			dashedLine(g);
-			
+
 
 			// Show the scores on the screen
 			info.scores(scores);
 
-			if(ball.getBallDx() <= 0){
-				info.predictY(player1, ball);
-				g.drawLine(player1.getCenterX(), ball.predictY(player1), ball.getCenterX(), ball.getCenterY());
-			}
-			if(ball.getBallDx() >= 0){
-				info.predictY(player2, ball);
-				g.drawLine(player2.getCenterX(), ball.predictY(player2), ball.getCenterX(), ball.getCenterY());
+			// Prediction where the ball will hit
+			if((info.prediction || info.predictionTraces) && (ball.getCenterX() > player1.getCenterX()+ball.getWidth() && ball.getCenterX() < player2.getCenterX()-ball.getWidth())){
+				if(ball.getBallDx() <= 0)
+					info.predictY(player1, ball, g);
+				
+				if(ball.getBallDx() >= 0)
+					info.predictY(player2, ball, g);
 			}
 
 		}
