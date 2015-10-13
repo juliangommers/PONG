@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -22,6 +23,8 @@ public class InfoText {
 	TrueTypeFont pauseFont;
 	TrueTypeFont pongFont;
 	TrueTypeFont playerFont;
+	TrueTypeFont bounceFont;
+	TrueTypeFont predictionFont;
 
 	Boolean prediction = false;
 	Boolean predictionTraces = false;
@@ -72,14 +75,17 @@ public class InfoText {
 
 	public void predictY(Player player, Ball ball, Graphics g) {
 		// the offset next to the paddle
-		float offset = ball.getBallDx() < 0 ? ball.getWidth() : -ball.getWidth();
+		float offsetX = ball.getBallDx() < 0 ? ball.getWidth() : -ball.getWidth();
+
+		// the offset next to the border
+		float offsetY = ball.getHeight()/2;
 
 		// position of the ball
 		float x1 = ball.getCenterX();
 		float y1 = ball.getCenterY();
 
 		// position where the ball will end up without bouncing
-		float x2 = player.getCenterX() + offset;
+		float x2 = player.getCenterX() + offsetX;
 		float y2 = ball.linEqY(ball.getDyDx(), x1, y1, x2);
 
 		// direction of the ball
@@ -90,19 +96,20 @@ public class InfoText {
 		// set while counter
 		int i = 0;
 
-
+		g.setColor(new Color(127, 127, 127));
 
 		// if y2 is out of the frame, it means the ball will bounce
 		while((y2 <= 0f || y2 >= contHeight)){
+			
 			// show ball traces
 			if(this.predictionTraces)
 				g.drawLine(x1, y1, x2, y2);
-
+			
 			// which border will it bounce off from
 			if( (dy > 0 && i % 2 == 0) || (dy < 0 && i % 2 != 0) )
-				y1 = contHeight;
+				y1 = contHeight - offsetY;
 			if( (dy < 0 && i % 2 == 0) || (dy > 0 && i % 2 != 0) )
-				y1 = 0f;
+				y1 = 0f + offsetY;
 
 			// change direction depending on the bounce round
 			int d = (int) Math.pow(-1, i);
@@ -115,7 +122,7 @@ public class InfoText {
 
 			// show where the ball will hit on the border
 			if(this.predictionTraces)
-				scoreFont.drawString(x1-(scoreFont.getWidth("x")/2f) , y1-(scoreFont.getHeight()/2f), "x");
+				bounceFont.drawString(x1-(bounceFont.getWidth("x")/2f) , y1-(bounceFont.getHeight()/2f), "x");
 
 			// increase counter after prediction
 			i++;
@@ -124,7 +131,8 @@ public class InfoText {
 		if(this.predictionTraces)
 			g.drawLine(x1, y1, x2, y2);
 
+		g.setColor(new Color(225, 225, 225));
 		// print the prediction
-		scoreFont.drawString(x2-(scoreFont.getWidth("[]")/2f) , y2-(scoreFont.getHeight()/2f), "[]");
+		predictionFont.drawString(x2-(predictionFont.getWidth("[]")/2f) , y2-(predictionFont.getHeight()/2f), "[]");
 	}
 }

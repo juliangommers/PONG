@@ -66,8 +66,8 @@ public class StartGame extends BasicGame {
 	 * @return The directions' angle (in radiants).
 	 */
 	private double getBounceAngle(Shape player){
-		double paddleMiddle = (player.getY() + (player.getHeight()/2));
-		double relativeIntersection = paddleMiddle - ball.getY();
+		double paddleMiddle = player.getCenterY();
+		double relativeIntersection = paddleMiddle - ball.getCenterY();
 		double normalisedrelativeIntersection = (relativeIntersection/(player1.getHeight()/2));
 		double bounceAngle = normalisedrelativeIntersection * Ball.MAXBOUNCEANGLE;
 		return bounceAngle;
@@ -94,6 +94,8 @@ public class StartGame extends BasicGame {
 		info.scoreFont 			= new TrueTypeFont( font30 , true);
 		info.pauseFont 			= new TrueTypeFont( font50 , true);
 		info.pongFont 			= new TrueTypeFont( font50 , true);
+		info.bounceFont			= new TrueTypeFont( font20 , true);
+		info.predictionFont		= new TrueTypeFont( font30 , true);
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
 		container.pause();
@@ -317,6 +319,7 @@ public class StartGame extends BasicGame {
 
 		}
 
+		g.setColor(new Color(255, 255, 255));
 		// Show the start screen at the beginning of the game
 		if(!this.gameStarted)
 			info.startScreen();

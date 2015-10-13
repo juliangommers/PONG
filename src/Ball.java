@@ -8,7 +8,7 @@ public class Ball {
 	private static int contWidth = StartGame.contWidth;
 	
 	Shape ball = null;
-	private float[] positionBall = {contWidth/2f, contHeight/2f};
+	private float[] positionBall = {contWidth/2f, contHeight/2f+5};
 
 	// Maximum bounce off angle (now 75º)
 	static double MAXBOUNCEANGLE = 5 * Math.PI/12;
