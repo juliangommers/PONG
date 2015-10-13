@@ -37,7 +37,6 @@ public class Ball {
 		ballSpeed = 5;
 		ballDx = direction * ballSpeed;
 		ballDy = 0;
-
 	}
 	
 	
@@ -81,6 +80,14 @@ public class Ball {
 	public void setY(float y) {
 //		this.positionBall[1] = y;
 		ball.setY(y);
+	}
+	
+	public float getWidth(){
+		return ball.getWidth();
+	}
+	
+	public float getHeight(){
+		return ball.getHeight();
 	}
 
 	/**
@@ -182,43 +189,50 @@ public class Ball {
 		ball.setCenterY(y);
 	}
 	
+	public float getDyDx(){
+		return (float)(this.getBallDy()) / (float)(this.getBallDx());
+	}
+	
 	/**
-	 * @param player 
+	 * @param displayX 
 	 *
 	 */
-	public float predictY(Player player) {
-//		System.out.println("Prediction:");
-		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
-//		System.out.println("a= "+a);
+	public float predictY(float displayX) {
+		float a = this.getDyDx();
 		float b = ( this.getCenterY() - a * this.getCenterX() );
-//		System.out.println("b= "+b);
-		float predictY = a * player.getCenterX() + b;
-//		System.out.println("predictY= "+predictY);
+		float predictY = a * displayX + b;
 		return predictY;
 	}
 	
-	public float linIntersectY(float x) {
-		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
-		float b = ( this.getCenterY() - a * this.getCenterX() );
-		float y = a * x + b;
-		return y;
-	}
-	
-	public float linIntersectX(float y) {
-		float a = (float)(this.getBallDy()) / (float)(this.getBallDx());
-		float b = ( this.getCenterY() - a * this.getCenterX() );
-		float x = (y-b)/a;
+	/**
+	 * Get the X value from a given y point, following the perpendicular of the direction of the ball.  
+	 * @param xPoint
+	 * @param yPoint
+	 * @param yEnd
+	 * @return
+	 */
+	public float linEqX(float direction, float xPoint, float yPoint, float yEnd) {
+		float a = direction;
+		float b = ( yPoint - a * xPoint );
+		float x = (yEnd - b) / a;
 		return x;
 	}
 	
-	public float linEq(float xPoint, float yPoint, float xEnd) {
-		float a = (float)(-this.getBallDy()) / (float)(this.getBallDx());
+	/**
+	 * Get the Y value from a given x point, following the perpendicular of the direction of the ball.  
+	 * @param xPoint
+	 * @param yPoint
+	 * @param xEnd
+	 * @return
+	 */
+	public float linEqY(float direction, float xPoint, float yPoint, float xEnd) {
+		float a = direction;
 		float b = ( yPoint - a * xPoint );
 		float y = a * xEnd + b;
 		return y;
 	}
 	
-	public String toString(Player player){
+	public String toString(float playerX){
 		String output = "Ball: \n"
 				+ "X=" + this.getCenterX() +"\n"
 				+ "Y=" + this.getCenterY() +"\n"
@@ -226,7 +240,7 @@ public class Ball {
 				+ "Dy=" + this.getBallDy() +"\n"
 				+ "Dx/Dy=" + this.getBallDx()/this.getBallDy() +"\n"
 				+ "b=" + ( this.getCenterY() - (float)(this.getBallDx()) / (float)(-this.getBallDy()) * this.getCenterX() ) +"\n"
-				+ "PredictedY=" + this.predictY(player) +"\n"
+				+ "PredictedY=" + this.predictY(playerX) +"\n"
 				;
 		return output;
 	}

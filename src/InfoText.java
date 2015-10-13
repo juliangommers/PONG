@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
 
@@ -21,6 +22,9 @@ public class InfoText {
 	TrueTypeFont pauseFont;
 	TrueTypeFont pongFont;
 	TrueTypeFont playerFont;
+
+	Boolean prediction = false;
+	Boolean predictionTraces = false;
 
 	public InfoText(){
 	}
@@ -66,22 +70,61 @@ public class InfoText {
 		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("DOWN - down"), (contHeight/20f)*19-(playerFont.getHeight()/2f), "DOWN - down");
 	}
 
-	public void predictY(Player player, Ball ball) {
-		float displayX = player.getCenterX();
-		float displayY = ball.predictY(player);
-//		while(displayY < 0 || displayY > contHeight){
-		for(int i = 0; (displayY < 0 || displayY > contHeight) && i < 5; i++){
-			float bounceX0 = ball.linIntersectX(0f);
-			float bounceXH = ball.linIntersectX(contHeight);
-			if(displayY < 0){
-				displayY = ball.linEq(bounceX0, 0, displayX);
-			}
-			if(displayY > contHeight){
-				displayY = ball.linEq(bounceXH, contHeight, displayX);
-			}
-//			Haal deze comment code weg en je ziet hoe vaak de loop door gaat
-//			scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth(Integer.toString(i))/2f) , (contHeight/10f)*i-(scoreFont.getHeight()/2f), Integer.toString(i));
+	public void predictY(Player player, Ball ball, Graphics g) {
+		// the offset next to the paddle
+		float offset = ball.getBallDx() < 0 ? ball.getWidth() : -ball.getWidth();
+
+		// position of the ball
+		float x1 = ball.getCenterX();
+		float y1 = ball.getCenterY();
+
+		// position where the ball will end up without bouncing
+		float x2 = player.getCenterX() + offset;
+		float y2 = ball.linEqY(ball.getDyDx(), x1, y1, x2);
+
+		// direction of the ball
+		float a = ball.getDyDx();
+		// ball up or down
+		double dy = ball.getBallDy();
+
+		// set while counter
+		int i = 0;
+
+
+
+		// if y2 is out of the frame, it means the ball will bounce
+		while((y2 <= 0f || y2 >= contHeight)){
+			// show ball traces
+			if(this.predictionTraces)
+				g.drawLine(x1, y1, x2, y2);
+
+			// which border will it bounce off from
+			if( (dy > 0 && i % 2 == 0) || (dy < 0 && i % 2 != 0) )
+				y1 = contHeight;
+			if( (dy < 0 && i % 2 == 0) || (dy > 0 && i % 2 != 0) )
+				y1 = 0f;
+
+			// change direction depending on the bounce round
+			int d = (int) Math.pow(-1, i);
+
+			// calculate hitting point on the border +
+			x1 = ball.linEqX(d*a, x2, y2, y1);
+
+			// recalculate estimated hitting point -
+			y2 = ball.linEqY(d*-a, x1, y1, x2);
+
+			// show where the ball will hit on the border
+			if(this.predictionTraces)
+				scoreFont.drawString(x1-(scoreFont.getWidth("x")/2f) , y1-(scoreFont.getHeight()/2f), "x");
+
+			// increase counter after prediction
+			i++;
 		}
-		scoreFont.drawString(displayX-(scoreFont.getWidth("X")/2f) , displayY-(scoreFont.getHeight()/2f), "X");
+		// show ball traces
+		if(this.predictionTraces)
+			g.drawLine(x1, y1, x2, y2);
+
+		// print the prediction
+		scoreFont.drawString(x2-(scoreFont.getWidth("[]")/2f) , y2-(scoreFont.getHeight()/2f), "[]");
 	}
 }
