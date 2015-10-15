@@ -41,7 +41,8 @@ public class StartGame extends BasicGame {
 	private double increasePerBounce = 0.25;
 
 	private boolean gameStarted = false;
-	private int gameType;
+	private int gameType = 0;
+	private int level = 0;
 
 	int currentFrame = 0;
 
@@ -96,6 +97,7 @@ public class StartGame extends BasicGame {
 		info.pongFont 			= new TrueTypeFont( font50 , true);
 		info.bounceFont			= new TrueTypeFont( font20 , true);
 		info.predictionFont		= new TrueTypeFont( font30 , true);
+		info.levelFont			= new TrueTypeFont( font30 , true);
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
 		container.pause();
@@ -143,6 +145,7 @@ public class StartGame extends BasicGame {
 			if(this.gameStarted){
 				container.setPaused(true);
 				this.gameType = 0;
+				this.level = 0;
 				this.gameStarted = false;
 				player1.setX(contWidth/10f);
 				player1.setY(contHeight/3f);
@@ -164,8 +167,12 @@ public class StartGame extends BasicGame {
 
 		// Single game
 		if(input.isKeyPressed(Input.KEY_1)){
-			if(!this.gameStarted){
+			if(!this.gameStarted && this.gameType == 0){
 				this.gameType = 1;
+			}
+			else if(this.gameType == 1){
+
+				this.level = 1;
 				this.gameStarted = true;
 				container.resume();
 			}
@@ -173,8 +180,15 @@ public class StartGame extends BasicGame {
 
 		// Multi player game
 		if(input.isKeyPressed(Input.KEY_2)){
-			if(!this.gameStarted){
+			if(!this.gameStarted && this.gameType == 0){
 				this.gameType = 2;
+				this.level = 1;
+				this.gameStarted = true;
+				container.resume();
+			}
+			else if(this.gameType == 1){
+
+				this.level = 2;
 				this.gameStarted = true;
 				container.resume();
 			}
@@ -182,11 +196,17 @@ public class StartGame extends BasicGame {
 
 		// Insane mode
 		if(input.isKeyPressed(Input.KEY_3)){
-			if(!this.gameStarted){
+			if(!this.gameStarted && this.gameType == 0){
 				this.gameType = 3;
 				this.gameStarted = true;
 				container.setVSync(false);
 				container.setTargetFrameRate(Integer.MAX_VALUE);
+				container.resume();
+			}
+			else if(this.gameType == 1){
+
+				this.level = 3;
+				this.gameStarted = true;
 				container.resume();
 			}
 		}
@@ -242,7 +262,7 @@ public class StartGame extends BasicGame {
 		/**************************
 		 * ARTIFICIAL INTELIGENCE *
 		 **************************/
-		if(this.gameStarted && (this.gameType == 1 || this.gameType == 3) && ball.getBallDx() <= 0 && !container.isPaused() && currentFrame != 8){
+		if(this.gameStarted && this.gameType == 1 && this.level == 1 && !container.isPaused() && ball.getBallDx() < 0.0){
 			if(ball.getCenterY() < player1.getCenterY()){
 				player1.up();
 			}
@@ -251,17 +271,88 @@ public class StartGame extends BasicGame {
 			}
 		}
 
-		if(currentFrame < 8)
+		if(this.gameStarted && this.gameType == 1 && this.level == 2 && !container.isPaused()){
+			if(ball.getCenterX() < contWidth/2f){
+				if(ball.getCenterY() < player1.getCenterY()){
+					player1.up();
+				}
+				if(ball.getCenterY() > player1.getCenterY()){
+					player1.down();
+				}
+			}
+			if(ball.getCenterX() > contWidth/2f){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
+			}
+		}
+
+		if(this.gameStarted && this.gameType == 1 && this.level == 3 && !container.isPaused()){
+			if(ball.getBallDx() <= 0){
+				if(player1.getCenterY() > ball.predictY(player1)){
+					player1.up();
+				}
+				if(player1.getCenterY() < ball.predictY(player1)){
+					player1.down();
+				}
+			}
+			if(ball.getBallDx() > 0){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
+			}
+
+		}
+
+
+
+
+		// keep track of the frames
+		if(currentFrame < 60)
 			currentFrame++;
 		else
 			currentFrame = 0;
 
-		if(this.gameStarted && this.gameType == 3 && ball.getBallDx() >= 0 && !container.isPaused()){
-			if(ball.getCenterY() < player2.getCenterY()){
-				player2.up();
+		// in case of insanemode
+		if(this.gameStarted && this.gameType == 3 && !container.isPaused()){
+			// player 1
+			if(ball.getBallDx() <= 0){
+				if(player1.getCenterY() > ball.predictY(player1)){
+					player1.up();
+				}
+				if(player1.getCenterY() < ball.predictY(player1)){
+					player1.down();
+				}
+			}else if(ball.getBallDx() > 0){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
 			}
-			if(ball.getCenterY() > player2.getCenterY()){
-				player2.down();
+
+			// player 2
+			if(ball.getBallDx() >= 0){
+				if(player2.getCenterY() > ball.predictY(player2)){
+					player1.up();
+				}
+				if(player2.getCenterY() < ball.predictY(player2)){
+					player2.down();
+				}
+			}else if(ball.getBallDx() < 0){
+				if(player2.getCenterY() > contHeight/2f){
+					player2.up();
+				}
+				if(player2.getCenterY() < contHeight/2f){
+					player2.down();
+				}
 			}
 		}
 
@@ -312,16 +403,19 @@ public class StartGame extends BasicGame {
 			if((info.prediction || info.predictionTraces) && (ball.getCenterX() > player1.getCenterX()+ball.getWidth() && ball.getCenterX() < player2.getCenterX()-ball.getWidth())){
 				if(ball.getBallDx() <= 0)
 					info.predictY(player1, ball, g);
-				
+
 				if(ball.getBallDx() >= 0)
 					info.predictY(player2, ball, g);
 			}
 
 		}
 
+		if(this.gameType == 1 && !this.gameStarted)
+			info.levelScreen();
+
 		g.setColor(new Color(255, 255, 255));
 		// Show the start screen at the beginning of the game
-		if(!this.gameStarted)
+		if(this.gameType == 0 && !this.gameStarted)
 			info.startScreen();
 
 		// Show the pause screen when the game is paused

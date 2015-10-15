@@ -23,6 +23,7 @@ public class InfoText {
 	TrueTypeFont pauseFont;
 	TrueTypeFont pongFont;
 	TrueTypeFont playerFont;
+	TrueTypeFont levelFont;
 	TrueTypeFont bounceFont;
 	TrueTypeFont predictionFont;
 
@@ -72,6 +73,12 @@ public class InfoText {
 		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("UP - up"), (contHeight/20f)*18-(playerFont.getHeight()/2f), "UP - up");
 		playerFont.drawString(((contWidth/20f)*19)-playerFont.getWidth("DOWN - down"), (contHeight/20f)*19-(playerFont.getHeight()/2f), "DOWN - down");
 	}
+	
+	public void levelScreen(){
+		levelFont.drawString((contWidth/10f)*3, (contHeight/10f)*4-(levelFont.getHeight()/2f), "1 - Beginner");
+		levelFont.drawString((contWidth/10f)*3, (contHeight/10f)*5-(levelFont.getHeight()/2f), "2 - Intermediate");
+		levelFont.drawString((contWidth/10f)*3, (contHeight/10f)*6-(levelFont.getHeight()/2f), "3 - Expert");
+	}
 
 	public void predictY(Player player, Ball ball, Graphics g) {
 		// the offset next to the paddle
@@ -96,6 +103,7 @@ public class InfoText {
 		// set while counter
 		int i = 0;
 
+		// set the colour to gray
 		g.setColor(new Color(127, 127, 127));
 
 		// if y2 is out of the frame, it means the ball will bounce
@@ -131,7 +139,9 @@ public class InfoText {
 		if(this.predictionTraces)
 			g.drawLine(x1, y1, x2, y2);
 
+		// set the colour to white
 		g.setColor(new Color(225, 225, 225));
+		
 		// print the prediction
 		predictionFont.drawString(x2-(predictionFont.getWidth("[]")/2f) , y2-(predictionFont.getHeight()/2f), "[]");
 	}

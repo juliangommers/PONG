@@ -194,17 +194,6 @@ public class Ball {
 	}
 	
 	/**
-	 * @param displayX 
-	 *
-	 */
-	public float predictY(float displayX) {
-		float a = this.getDyDx();
-		float b = ( this.getCenterY() - a * this.getCenterX() );
-		float predictY = a * displayX + b;
-		return predictY;
-	}
-	
-	/**
 	 * Get the X value from a given y point, following the perpendicular of the direction of the ball.  
 	 * @param xPoint
 	 * @param yPoint
@@ -232,6 +221,54 @@ public class Ball {
 		return y;
 	}
 	
+	public float predictY(Player player) {
+		// the offset next to the paddle
+		float offsetX = this.getBallDx() < 0 ? this.getWidth() : -this.getWidth();
+
+		// the offset next to the border
+		float offsetY = this.getHeight()/2;
+
+		// position of the ball
+		float x1 = this.getCenterX();
+		float y1 = this.getCenterY();
+
+		// position where the ball will end up without bouncing
+		float x2 = player.getCenterX() + offsetX;
+		float y2 = this.linEqY(this.getDyDx(), x1, y1, x2);
+
+		// direction of the ball
+		float a = this.getDyDx();
+		// ball up or down
+		double dy = this.getBallDy();
+
+		// set while counter
+		int i = 0;
+
+		// if y2 is out of the frame, it means the ball will bounce
+		while((y2 <= 0f || y2 >= contHeight)){
+			
+			// which border will it bounce off from
+			if( (dy > 0 && i % 2 == 0) || (dy < 0 && i % 2 != 0) )
+				y1 = contHeight - offsetY;
+			if( (dy < 0 && i % 2 == 0) || (dy > 0 && i % 2 != 0) )
+				y1 = 0f + offsetY;
+
+			// change direction depending on the bounce round
+			int d = (int) Math.pow(-1, i);
+
+			// calculate hitting point on the border +
+			x1 = this.linEqX(d*a, x2, y2, y1);
+
+			// recalculate estimated hitting point -
+			y2 = this.linEqY(d*-a, x1, y1, x2);
+
+			// increase counter after prediction
+			i++;
+		}
+		
+		return y2;
+	}
+	
 	public String toString(float playerX){
 		String output = "Ball: \n"
 				+ "X=" + this.getCenterX() +"\n"
@@ -240,7 +277,6 @@ public class Ball {
 				+ "Dy=" + this.getBallDy() +"\n"
 				+ "Dx/Dy=" + this.getBallDx()/this.getBallDy() +"\n"
 				+ "b=" + ( this.getCenterY() - (float)(this.getBallDx()) / (float)(-this.getBallDy()) * this.getCenterX() ) +"\n"
-				+ "PredictedY=" + this.predictY(playerX) +"\n"
 				;
 		return output;
 	}
