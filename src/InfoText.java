@@ -66,6 +66,9 @@ public class InfoText {
 		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("1- SINGLE PLAYER")/2f), (contHeight/10f)*5-(scoreFont.getHeight()/2f), "1- SINGLE PLAYER");
 		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("2- MULTIPLAYER")/2f), (contHeight/10f)*6-(scoreFont.getHeight()/2f), "2- MULTIPLAYER");
 		scoreFont.drawString((contWidth/2f)-(scoreFont.getWidth("3- INSANE 2P")/2f), (contHeight/10f)*7-(scoreFont.getHeight()/2f), "3- INSANE 2P");
+	}
+	
+	public void playerInstructions(){
 		playerFont.drawString((contWidth/20f), (contHeight/20f)*17-(playerFont.getHeight()/2f), "P1");
 		playerFont.drawString((contWidth/20f), (contHeight/20f)*18-(playerFont.getHeight()/2f), "W - up");
 		playerFont.drawString((contWidth/20f), (contHeight/20f)*19-(playerFont.getHeight()/2f), "S - down");

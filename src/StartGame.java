@@ -124,9 +124,15 @@ public class StartGame extends BasicGame {
 		// Player interaction of Player 2
 		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() > 0 && !container.isPaused() && this.gameStarted) {
 			player2.up();
+			if(this.gameType == 3){
+				this.level = 2;
+			}
 		}
 		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() < contHeight && !container.isPaused() && this.gameStarted) {
 			player2.down();
+			if(this.gameType == 3){
+				this.level = 2;
+			}
 		}
 
 		// User can exit the game
@@ -262,6 +268,7 @@ public class StartGame extends BasicGame {
 		/**************************
 		 * ARTIFICIAL INTELIGENCE *
 		 **************************/
+		// LEVEL BEGINNER
 		if(this.gameStarted && this.gameType == 1 && this.level == 1 && !container.isPaused() && ball.getBallDx() < 0.0){
 			if(ball.getCenterY() < player1.getCenterY()){
 				player1.up();
@@ -271,6 +278,7 @@ public class StartGame extends BasicGame {
 			}
 		}
 
+		// LEVEL INTERMEDIATE
 		if(this.gameStarted && this.gameType == 1 && this.level == 2 && !container.isPaused()){
 			if(ball.getCenterX() < contWidth/2f){
 				if(ball.getCenterY() < player1.getCenterY()){
@@ -290,12 +298,19 @@ public class StartGame extends BasicGame {
 			}
 		}
 
+		// LEVEL EXPERT
 		if(this.gameStarted && this.gameType == 1 && this.level == 3 && !container.isPaused()){
 			if(ball.getBallDx() <= 0){
-				if(player1.getCenterY() > ball.predictY(player1)){
+				int off = 0;
+				if( player2.getCenterY() > contHeight/2f)
+					off = -20;
+				else if( player2.getCenterY() < contHeight/2f)
+					off = 20;
+				
+				if( player1.getCenterY()+off > ball.predictY(player1) ){
 					player1.up();
 				}
-				if(player1.getCenterY() < ball.predictY(player1)){
+				if( player1.getCenterY()+off < ball.predictY(player1) ){
 					player1.down();
 				}
 			}
@@ -323,10 +338,10 @@ public class StartGame extends BasicGame {
 		if(this.gameStarted && this.gameType == 3 && !container.isPaused()){
 			// player 1
 			if(ball.getBallDx() <= 0){
-				if(player1.getCenterY() > ball.predictY(player1)){
+				if(player1.getCenterY()+50 > ball.predictY(player1)){
 					player1.up();
 				}
-				if(player1.getCenterY() < ball.predictY(player1)){
+				if(player1.getCenterY()-50 < ball.predictY(player1)){
 					player1.down();
 				}
 			}else if(ball.getBallDx() > 0){
@@ -339,14 +354,14 @@ public class StartGame extends BasicGame {
 			}
 
 			// player 2
-			if(ball.getBallDx() >= 0){
-				if(player2.getCenterY() > ball.predictY(player2)){
-					player1.up();
+			if(ball.getBallDx() >= 0 && this.level != 2){
+				if(player2.getCenterY()-10 > ball.getCenterY()){
+					player2.up();
 				}
-				if(player2.getCenterY() < ball.predictY(player2)){
+				if(player2.getCenterY()+10 < ball.getCenterY()){
 					player2.down();
 				}
-			}else if(ball.getBallDx() < 0){
+			}else if(ball.getBallDx() < 0 && this.level != 2){
 				if(player2.getCenterY() > contHeight/2f){
 					player2.up();
 				}
@@ -410,13 +425,17 @@ public class StartGame extends BasicGame {
 
 		}
 
-		if(this.gameType == 1 && !this.gameStarted)
+		if(this.gameType == 1 && !this.gameStarted){
 			info.levelScreen();
+			info.playerInstructions();
+		}
 
 		g.setColor(new Color(255, 255, 255));
 		// Show the start screen at the beginning of the game
-		if(this.gameType == 0 && !this.gameStarted)
+		if(this.gameType == 0 && !this.gameStarted){
 			info.startScreen();
+			info.playerInstructions();
+		}
 
 		// Show the pause screen when the game is paused
 		if(container.isPaused() && this.gameStarted)
