@@ -1,6 +1,5 @@
 
 import java.awt.Font;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -448,15 +447,7 @@ public class StartGame extends BasicGame {
     }
 
     public static void main(String[] args) {
-        String currentPath;
-        try {
-            currentPath = new java.io.File(".").getCanonicalPath();
-            System.out.println(currentPath);
-//            System.setProperty("java.library.path", null);
-        } catch (IOException ex) {
-            System.out.println(ex);
-        }
-
+        NativeLoader.load();
         try {
             AppGameContainer appgc;
             appgc = new AppGameContainer(new StartGame("PONG"));
