@@ -464,6 +464,7 @@ public class StartGame extends BasicGame {
 
 		}
 
+		// show instruction
 		if(gameType == 1 && !gameStarted){
 			info.levelScreen();
 			info.playerInstructions();
@@ -483,6 +484,7 @@ public class StartGame extends BasicGame {
 	}
 
 	public static void main(String[] args) {
+		NativeLoader.load();
 		try {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new StartGame("PONG"));
@@ -490,7 +492,6 @@ public class StartGame extends BasicGame {
 			appgc.setDisplayMode(contWidth, contHeight, false);
 			appgc.setAlwaysRender(true);
 			appgc.setVSync(true);
-			appgc.setFullscreen(false);
 			appgc.start();
 		} catch (SlickException ex) {
 			Logger.getLogger(StartGame.class.getName()).log(Level.SEVERE, null, ex);
