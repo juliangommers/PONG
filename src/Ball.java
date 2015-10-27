@@ -4,8 +4,8 @@ import org.newdawn.slick.geom.Shape;
 
 public class Ball {
 
-	private static int contHeight = StartGame.contHeight;
-	private static int contWidth = StartGame.contWidth;
+	private static final int contHeight = StartGame.contHeight;
+	private static final int contWidth = StartGame.contWidth;
 	
 	Shape ball = null;
 	private float[] positionBall = {contWidth/2f, contHeight/2f+5};

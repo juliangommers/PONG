@@ -89,9 +89,9 @@ public class NativeLoader {
 	 * Listing of the file names of the Macintosh natives
 	 */
 	private static final String[] MAC_LIBRARIES = {
-		"libjinput-osx.jnilib",
-		"liblwjgl.jnilib",
-		"libopenal.dylib"
+		"libjinput-osx.dylib",
+		"liblwjgl.dylib",
+		"openal.dylib"
 	};
 	
 	/**
