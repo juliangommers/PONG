@@ -89,9 +89,9 @@ public class NativeLoader {
 	 * Listing of the file names of the Macintosh natives
 	 */
 	private static final String[] MAC_LIBRARIES = {
-		"libjinput-osx.jnilib",
-		"liblwjgl.jnilib",
-		"libopenal.dylib"
+		"libjinput-osx.dylib",
+		"liblwjgl.dylib",
+		"openal.dylib"
 	};
 	
 	/**
@@ -269,12 +269,12 @@ public class NativeLoader {
 			case LWJGLUtil.PLATFORM_LINUX:
 					libraries = LINUX_LIBRARIES;
 					prefix = LINUX_NATIVES_DEFAULT_PACKAGE + "/";
-					nativeResourceJar = new JarFile(new File(LINUX_NATIVE_JAR));
+					nativeResourceJar = new JarFile(new File("libraries/slick/lib/"+LINUX_NATIVE_JAR));
 					break;
 			case LWJGLUtil.PLATFORM_MACOSX:
 					libraries = MAC_LIBRARIES;
 					prefix = MAC_NATIVES_DEFAULT_PACKAGE + "/";
-					nativeResourceJar = new JarFile(new File(MAC_NATIVE_JAR));
+					nativeResourceJar = new JarFile(new File("libraries/slick/lib/"+MAC_NATIVE_JAR));
 					break;
 			case LWJGLUtil.PLATFORM_WINDOWS:
 					libraries = WINDOWS_LIBRARIES;
