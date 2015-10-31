@@ -10,46 +10,42 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.geom.Circle;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 
 public class StartGame extends BasicGame {
 
 	// Window settings
-	private static int contHeight = 600;
-	private static int contWidth = 800;
+	static int contHeight = 600;
+	static int contWidth = 800;
 
-	// Players and Ball
-	private Shape player1 = null;
-	private Shape player2 = null;
-	private Shape ball = null;
+	// Load the ball
+	Ball ball;
 
-	// Initial location of the players and ball
-	private float[] positionBall = {400,300};
-	private float[] positionP1 = {100,200};
-	private float[] positionP2 = {675,200};
+	// Load the scores
+	Scores scores;
 
-	// Let's start the game at 0 - 0
-	private int[] scores = {0,0};
+	// Load the players
+	private Player player1;
+	private Player player2;
 
-	// Initial settings of the textbox
-	private float[] positionScoreP1 = {contWidth/2-50, 50};
-	private float[] positionScoreP2 = {contWidth/2+50, 50};
-	private Font font;
-	private TrueTypeFont ttf;
-	private TrueTypeFont ttf_big;
+	// Load the info screens
+	private InfoText info;
 
-	// Maximum bounce off angle (now 75º)
-	private static double MAXBOUNCEANGLE = 5 * Math.PI/12;
+	// Load sounds
+	private Sound plop;
+	private Sound beep;
 
-	// Starting direction of the ball (starts with random side)
-	private double ballDx = (Math.random() <= 0.5) ? 5 : -5;
-	private double ballDy = 0;
-	private double ballSpeed = 5;
-	private double playerSpeed = 5;
-	private double increasePerBounce = 0.25;
+	// Speed settings
+	private double increasePerBounce;
+
+	private boolean gameStarted;
+	private int gameType;
+	private int level;
+
+	// Keep track of the current frame
+	int currentFrame;
 
 	/**
 	 * Constructor of StartGame
@@ -57,6 +53,11 @@ public class StartGame extends BasicGame {
 	 */
 	public StartGame(String gamename) {
 		super(gamename);
+		increasePerBounce = 0.25;
+		gameStarted = false;
+		gameType = 0;
+		level = 0;
+		currentFrame = 0;
 	}
 
 	/**
@@ -72,31 +73,11 @@ public class StartGame extends BasicGame {
 	 * @return The directions' angle (in radiants).
 	 */
 	private double getBounceAngle(Shape player){
-		double paddleMiddle = (player.getY() + (player.getHeight()/2));
-		double relativeIntersection = paddleMiddle - ball.getY();
+		double paddleMiddle = player.getCenterY();
+		double relativeIntersection = paddleMiddle - ball.getCenterY();
 		double normalisedrelativeIntersection = (relativeIntersection/(player1.getHeight()/2));
-		double bounceAngle = normalisedrelativeIntersection * MAXBOUNCEANGLE;
+		double bounceAngle = normalisedrelativeIntersection * Ball.maxBounceAngle;
 		return bounceAngle;
-	}
-
-	/**
-	 * Resets the original settings of the ball.
-	 * @param container The GameContainer of the game.
-	 * @param direction The direction the ball should take.
-	 */
-	private void resetBall(GameContainer container, double direction){
-		positionBall[0] = (float) (container.getWidth()/2.0);
-		positionBall[1] = (float) (container.getHeight()/2.0);
-		ballSpeed = 5;
-		ballDx = direction*ballSpeed;
-		ballDy = 0;
-
-	}
-
-	private void dashedLine(Graphics g){
-		for (int i = 0; i < contHeight; i+=25) {
-			g.drawLine(contWidth / 2, i, contWidth / 2, (float)(i+12.5));
-		}
 	}
 
 	/**
@@ -104,13 +85,42 @@ public class StartGame extends BasicGame {
 	 */
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		container.setShowFPS(true);
-		player1 = new Rectangle(positionP1[0], positionP1[1], 25, 200);
-		player2 = new Rectangle(positionP2[0], positionP2[1], 25, 200);
-		ball = new Circle(positionBall[0], positionBall[1], 10);
-		font = new Font("Verdana", Font.BOLD, 30);
-		ttf = new TrueTypeFont(font, true);
-		ttf_big = new TrueTypeFont(new Font("Verdana", Font.BOLD, 60), true);
+		// don't show the fps by default
+		container.setShowFPS(false);
+
+		// initialise the ball
+		ball = new Ball();
+
+		// initialise the texts
+		info = new InfoText();
+
+		// initialise the scores
+		scores = new Scores();
+
+		// initialise the players
+		player1 = new Player(contWidth/10f, contHeight/3f);
+		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
+
+		// load the fonts in different sizes
+		Font font20 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 20);
+		Font font30 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
+		Font font50 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
+
+		// initialize the used fonts
+		info.playerFont			= new TrueTypeFont( font20 , true);
+		info.scoreFont 			= new TrueTypeFont( font30 , true);
+		info.pauseFont 			= new TrueTypeFont( font50 , true);
+		info.pongFont 			= new TrueTypeFont( font50 , true);
+		info.bounceFont			= new TrueTypeFont( font20 , true);
+		info.predictionFont		= new TrueTypeFont( font30 , true);
+		info.levelFont			= new TrueTypeFont( font30 , true);
+
+		// initialize the sounds
+		plop = new Sound("media/8bit_plop.wav");
+		beep = new Sound("media/8bit_beep.wav");
+
+		// screen is paused by default to create a menu situation
+		container.pause();
 	}
 
 	/**
@@ -118,85 +128,303 @@ public class StartGame extends BasicGame {
 	 */
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
-
 		/**********************
 		 * PLAYER INTERACTION *
 		 **********************/
 		Input input = container.getInput();
 		// Player interaction of Player 1
-		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() <= container.getHeight()) {
-			positionP1[1] = positionP1[1] + (float)(playerSpeed);
-			player1.setLocation(positionP1[0], positionP1[1]);
+		if (input.isKeyDown(Input.KEY_W) && player1.getMinY() > 0 && !container.isPaused() && gameStarted && gameType != 1 && (gameType == 2 || gameType == 3)) {
+			player1.up();
 		}
-		if (input.isKeyDown(Input.KEY_W) && player1.getMinY() >= 0) {
-			positionP1[1] = positionP1[1] - (float)(playerSpeed);
-			player1.setLocation(positionP1[0], positionP1[1]);
+		if (input.isKeyDown(Input.KEY_S) && player1.getMaxY() < contHeight && !container.isPaused() && gameStarted && gameType != 1 && (gameType == 2 || gameType == 3)) {
+			player1.down();
 		}
 
 		// Player interaction of Player 2
-		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() <= container.getHeight()) {
-			positionP2[1] = positionP2[1] + (float)(playerSpeed);
-			player2.setLocation(positionP2[0], positionP2[1]);
+		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() > 0 && !container.isPaused() && gameStarted) {
+			player2.up();
+			if(gameType == 3){
+				level = 2;
+			}
 		}
-		if (input.isKeyDown(Input.KEY_UP) && player2.getMinY() >= 0) {
-			positionP2[1] = positionP2[1] - (float)(playerSpeed);
-			player2.setLocation(positionP2[0], positionP2[1]);
+		if (input.isKeyDown(Input.KEY_DOWN) && player2.getMaxY() < contHeight && !container.isPaused() && gameStarted) {
+			player2.down();
+			if(gameType == 3){
+				level = 2;
+			}
 		}
-		if(input.isKeyDown(Input.KEY_ESCAPE)){
+
+		// User can exit the game
+		if(input.isKeyPressed(Input.KEY_ESCAPE)){
 			container.exit();
 		}
+
+		// User can pause the game
 		if(input.isKeyPressed(Input.KEY_P)){
-//			if(!container.isPaused())
-//				container.pause();
-//			else
-//				container.resume();
-			container.setPaused(!container.isPaused());
+			if(gameStarted)
+				container.setPaused(!container.isPaused());
 		}
+
+		// User can reset the game
+		if(input.isKeyPressed(Input.KEY_R)){
+			if(gameStarted){
+				container.setPaused(true);
+				gameType = 0;
+				level = 0;
+				gameStarted = false;
+				player1.setX(contWidth/10f);
+				player1.setY(contHeight/3f);
+				player2.setX(((contWidth/10f)*9)-(contWidth/40f));
+				player2.setY(contHeight/3f);
+				ball.setDx(0);
+				ball.setDy(0);
+				ball.resetBall((Math.random() <= 0.5) ? 1 : -1);
+				info.prediction = false;
+				info.predictionTraces = false;
+				container.setVSync(true);
+				container.setTargetFrameRate(60);
+				scores.setScores( new int[]{0,0} );
+			}
+		}
+
+		// User can reset the game
+		if(input.isKeyPressed(Input.KEY_F)){
+			container.setFullscreen( !container.isFullscreen() );
+			// set the height and width of the container as the height and width of the container.. duh
+		}
+
+		// Display FPS by pressing 1
+		if(input.isKeyPressed(Input.KEY_0)){
+			container.setShowFPS(!container.isShowingFPS());
+		}
+
+		// Single game
+		if(input.isKeyPressed(Input.KEY_1)){
+			if(!gameStarted && gameType == 0){
+				gameType = 1;
+			}
+			else if(gameType == 1){
+
+				level = 1;
+				gameStarted = true;
+				container.resume();
+			}
+		}
+
+		// Multi player game
+		if(input.isKeyPressed(Input.KEY_2)){
+			if(!gameStarted && gameType == 0){
+				gameType = 2;
+				level = 1;
+				gameStarted = true;
+				container.resume();
+			}
+			else if(gameType == 1){
+
+				level = 2;
+				gameStarted = true;
+				container.resume();
+			}
+		}
+
+		// Insane mode
+		if(input.isKeyPressed(Input.KEY_3)){
+			if(!gameStarted && gameType == 0){
+				gameType = 3;
+				gameStarted = true;
+				container.setVSync(false);
+				container.setTargetFrameRate(Integer.MAX_VALUE);
+				container.resume();
+			}
+			else if(gameType == 1){
+
+				level = 3;
+				gameStarted = true;
+				container.resume();
+			}
+		}
+
+		// Show prediction
+		if(input.isKeyPressed(Input.KEY_8)){
+			info.prediction = !info.prediction;
+		}
+
+		// Show prediction traces
+		if(input.isKeyPressed(Input.KEY_9)){
+			info.prediction = !info.prediction;
+			info.predictionTraces = !info.predictionTraces;
+		}
+
 
 		/********************
 		 * BOUNCE MECHANISM *
 		 ********************/
 		// Bounce back from the paddle.
-		if (ball.intersects(player1)) {
-			ballDx = ballSpeed * Math.cos( getBounceAngle(player1) );
-			ballDy = ballSpeed * -Math.sin( getBounceAngle(player1) );
-			ballSpeed += increasePerBounce;
-			//			System.out.println("Bounce Player 1");
-		} else if (ball.intersects(player2)) {
-			ballDx = ballSpeed * -Math.cos( getBounceAngle(player2) );
-			ballDy = ballSpeed * -Math.sin( getBounceAngle(player2) );
-			ballSpeed += increasePerBounce;
-			//			System.out.println("Bounce Player 2");
+		if (ball.ball.intersects(player1.getPlayer())) {
+			plop.play();
+			ball.setDx( ball.getSpeed() * Math.cos( getBounceAngle(player1.getPlayer()) ) );
+			ball.setDy( ball.getSpeed() * -Math.sin( getBounceAngle(player1.getPlayer()) ) );
+			ball.setBallSpeed(ball.getSpeed() + increasePerBounce);
+		} else if (ball.ball.intersects(player2.getPlayer())) {
+			plop.play();
+			ball.setDx( ball.getSpeed() * -Math.cos( getBounceAngle(player2.getPlayer()) ) );
+			ball.setDy( ball.getSpeed() * -Math.sin( getBounceAngle(player2.getPlayer()) ) );
+			ball.setBallSpeed(ball.getSpeed() + increasePerBounce);
 		}
 
 		// Bounce off the edges
-		if(ball.getMinY() <= 0.0 || ball.getMaxY() >= (float)container.getHeight()){
-			ballDy = -ballDy;
+		if(ball.getMinY() <= 0.0 || ball.getMaxY() > (double) contHeight){
+			ball.setDy(-ball.getDy());
 		}
+
 
 		/*********************
 		 * SCORES INDICATION *
 		 *********************/
 		// Keep the scores up to date
-		if (ball.getMinX() <= (float) 0) {
-			scores[1]++;
-			resetBall(container, -1);
-		}else if (ball.getMaxX() >= (float)container.getWidth()) {
-			scores[0]++;
-			resetBall(container, 1);
+		if (ball.getMinX() <= 0.0) {
+			beep.play();
+			scores.increaseScoreP2();
+			ball.resetBall(-1);
+		}else if (ball.getMaxX() >= (float)contWidth) {
+			beep.play();
+			scores.increaseScoreP1();
+			ball.resetBall(1);
 		}
+
+		/**************************
+		 * ARTIFICIAL INTELIGENCE *
+		 **************************/
+		// LEVEL BEGINNER
+		if(gameStarted && gameType == 1 && level == 1 && !container.isPaused() && ball.getDx() < 0.0){
+			if(ball.getCenterY() < player1.getCenterY()){
+				player1.up();
+			}
+			if(ball.getCenterY() > player1.getCenterY()){
+				player1.down();
+			}
+		}
+
+		// LEVEL INTERMEDIATE
+		if(gameStarted && gameType == 1 && level == 2 && !container.isPaused()){
+			if(ball.getCenterX() < contWidth/2f){
+				if(ball.getCenterY() < player1.getCenterY()){
+					player1.up();
+				}
+				if(ball.getCenterY() > player1.getCenterY()){
+					player1.down();
+				}
+			}
+			if(ball.getCenterX() > contWidth/2f){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
+			}
+		}
+
+		// LEVEL EXPERT
+		if(gameStarted && gameType == 1 && level == 3 && !container.isPaused()){
+			if(ball.getDx() <= 0){
+				int off = 0;
+				if( player2.getCenterY() > contHeight/2f)
+					off = -20;
+				else if( player2.getCenterY() < contHeight/2f)
+					off = 20;
+
+				if( player1.getCenterY()+off > ball.predictY(player1) ){
+					player1.up();
+				}
+				if( player1.getCenterY()+off < ball.predictY(player1) ){
+					player1.down();
+				}
+			}
+			if(ball.getDx() > 0){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
+			}
+
+		}
+
+		// keep track of the frames
+		if(currentFrame < 60)
+			currentFrame++;
+		else
+			currentFrame = 0;
+
+		// in case of insanemode
+		if(gameStarted && gameType == 3 && !container.isPaused()){
+			// player 1
+			if(ball.getDx() <= 0){
+				int off = 0;
+				if( player2.getCenterY() > contHeight/2f)
+					off = -20;
+				else if( player2.getCenterY() < contHeight/2f)
+					off = 20;
+
+				if( player1.getCenterY()+off > ball.predictY(player1) ){
+					player1.up();
+				}
+				if( player1.getCenterY()+off < ball.predictY(player1) ){
+					player1.down();
+				}
+			}
+			if(ball.getDx() > 0){
+				if(player1.getCenterY() > contHeight/2f){
+					player1.up();
+				}
+				if(player1.getCenterY() < contHeight/2f){
+					player1.down();
+				}
+			}
+
+			// player 2
+			if(ball.getDx() >= 0 && level != 2){
+				int off = 0;
+				if( player1.getCenterY() >= contHeight/2f)
+					off = -20;
+				else if( player1.getCenterY() < contHeight/2f)
+					off = 20;
+
+				if( player2.getCenterY()+off > ball.predictY(player2) ){
+					player2.up();
+				}
+				if( player2.getCenterY()+off < ball.predictY(player2) ){
+					player2.down();
+				}
+			}
+			if(ball.getDx() < 0 && level != 2){
+				if(player2.getCenterY() > contHeight/2f){
+					player2.up();
+				}
+				if(player2.getCenterY() < contHeight/2f){
+					player2.down();
+				}
+			}
+		}
+
 
 		/************
 		 * MOVEMENT *
 		 ************/
 		// Add the Dx or Dy to the coordinate
-		if (ball.getMinX() >= 0 && ball.getMaxX() <= container.getWidth() && !container.isPaused()) {
-			positionBall[0] += ballDx;
-			positionBall[1] += ballDy;
+		if (ball.getMinX() >= 0 && ball.getMaxX() <= contWidth && !container.isPaused() && gameStarted) {
+			float x = (float) ( ball.getX() + ball.getDx() );
+			float y = (float) ( ball.getY() + ball.getDy() );
+			ball.setX( x );
+			ball.setY( y );
+		}else if(!container.isPaused() && gameStarted){
+			ball.setCenterX((float) ball.getX());
+			ball.setCenterY((float) ball.getY());
 		}
-		ball.setCenterX(positionBall[0]);
-		ball.setCenterY(positionBall[1]);
-		//		ball.setLocation(positionBall[0], positionBall[1]);
+
+		//		System.out.println(ball.toString(player1));
 	}
 
 	/**
@@ -205,31 +433,58 @@ public class StartGame extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 
-		g.draw(player1);
+		if(gameStarted){
+			g.draw(player1.getPlayer());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(player1.getPlayer());
+
+			g.draw(player2.getPlayer());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(player2.getPlayer());
+
+			g.draw(ball.getBall());
+			g.setColor(new Color(255, 255, 255));
+			g.fill(ball.getBall());
+
+			info.dashedLine(g);
+
+
+			// Show the scores on the screen
+			info.scores(scores);
+
+			// Prediction where the ball will hit
+			if((info.prediction || info.predictionTraces) && (ball.getCenterX() > (player1.getCenterX() + ball.getWidth()) && ball.getCenterX() < (player2.getCenterX() - ball.getWidth())) ){
+				if(ball.getDx() <= 0)
+					ball.predictY(player1);
+				if(ball.getDx() >= 0)
+					ball.predictY(player2);
+
+				info.predictY(ball, g);
+			}
+
+		}
+
+		// show instruction
+		if(gameType == 1 && !gameStarted){
+			info.levelScreen();
+			info.playerInstructions();
+		}
+
 		g.setColor(new Color(255, 255, 255));
-		g.fill(player1);
+		// Show the start screen at the beginning of the game
+		if(gameType == 0 && !gameStarted){
+			info.startScreen();
+			info.playerInstructions();
+		}
 
-		g.draw(player2);
-		g.setColor(new Color(255, 255, 255));
-		g.fill(player2);
-
-		g.draw(ball);
-		g.setColor(new Color(255, 255, 255));
-		g.fill(ball);
-
-		dashedLine(g);
-
-		ttf.drawString(positionScoreP1[0]-10, positionScoreP1[1], Integer.toString(scores[0]));
-		ttf.drawString(positionScoreP2[0]-10, positionScoreP2[1], Integer.toString(scores[1]));
-		
-		String pauseString = "PAUSE";
-		
-		if(container.isPaused())
-			ttf_big.drawString((container.getWidth()/2f)-(ttf_big.getWidth(pauseString)/2f), (container.getHeight()/2f)-(ttf_big.getHeight()/2f), pauseString);
+		// Show the pause screen when the game is paused
+		if(container.isPaused() && gameStarted)
+			info.pauseScreen();
 
 	}
 
 	public static void main(String[] args) {
+		NativeLoader.load();
 		try {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new StartGame("PONG"));
