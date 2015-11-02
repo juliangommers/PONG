@@ -156,7 +156,11 @@ public class StartGame extends BasicGame {
 
 		// User can exit the game
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			container.exit();
+                    if (container.isPaused()){
+                    container.exit();
+                    }else{
+                        container.setPaused(!container.isPaused());
+                    }
 		}
 
 		// User can pause the game
