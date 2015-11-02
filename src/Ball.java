@@ -63,7 +63,6 @@ public class Ball {
 		return ball;
 	}
 
-
 	/************
 	 * LOCATION *
 	 ************/
@@ -317,7 +316,6 @@ public class Ball {
 			// increase counter after prediction
 			i++;
 		}
-		
 		// keep track of the bounce coordinates
 		predictionTrace.add( new float[]{x2,y2} );
 		return y2;
