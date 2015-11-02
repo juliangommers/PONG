@@ -156,7 +156,11 @@ public class StartGame extends BasicGame {
 
 		// User can exit the game
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			container.exit();
+			if(container.isPaused()){
+				container.exit();
+			}else{
+				container.setPaused(!container.isPaused());
+			}
 		}
 
 		// User can pause the game
@@ -358,7 +362,7 @@ public class StartGame extends BasicGame {
 		else
 			currentFrame = 0;
 
-		// in case of insanemode
+		// INSANEMODE
 		if(gameStarted && gameType == 3 && !container.isPaused()){
 			// player 1
 			if(ball.getDx() <= 0){
