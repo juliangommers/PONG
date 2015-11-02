@@ -89,7 +89,7 @@ public class InfoText {
     public void pauseScreen() {
         pauseFont.drawString((contWidth / 2f) - (pauseFont.getWidth("PAUSE") / 2f), (contHeight / 2f) - (pauseFont.getHeight() / 2f), "PAUSE");
         scoreFont.drawString((contWidth / 2f) - (scoreFont.getWidth("P- resume") / 2f), (contHeight / 10f) * 7 - (scoreFont.getHeight() / 2f), "P- resume");
-        scoreFont.drawString((contWidth / 2f) - (scoreFont.getWidth("R- restart") / 2f), (contHeight / 10f) * 8 - (scoreFont.getHeight() / 2f), "R- return to start");
+        scoreFont.drawString((contWidth / 2f) - (scoreFont.getWidth("R- return to start screen") / 2f), (contHeight / 10f) * 8 - (scoreFont.getHeight() / 2f), "R- return to start screen");
         scoreFont.drawString((contWidth / 2f) - (scoreFont.getWidth("ESC- exit game") / 2f), (contHeight / 10f) * 9 - (scoreFont.getHeight() / 2f), "ESC- exit game");
     }
 
