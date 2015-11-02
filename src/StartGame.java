@@ -250,7 +250,7 @@ public class StartGame extends BasicGame {
 
 		// Show prediction
 		if(input.isKeyPressed(Input.KEY_8)){
-                    if (info.prediction==true&&info.predictionTraces==true){
+                    if (info.prediction && info.predictionTraces){
 			info.predictionTraces = !info.predictionTraces;
                     }else{
                         info.prediction = !info.prediction;
@@ -259,10 +259,10 @@ public class StartGame extends BasicGame {
 
 		// Show prediction traces
 		if(input.isKeyPressed(Input.KEY_9)){
-                    if (info.prediction==true&&info.predictionTraces==true){
+                    if (info.prediction && info.predictionTraces){
                         info.prediction = !info.prediction;
 			info.predictionTraces = !info.predictionTraces;
-                    }else if(info.prediction==true &&info.predictionTraces==false){
+                    }else if(info.prediction && !info.predictionTraces){
                         info.predictionTraces = true;
                     }else{
                         info.predictionTraces = true;
