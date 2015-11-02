@@ -259,15 +259,11 @@ public class StartGame extends BasicGame {
 
 		// Show prediction traces
 		if(input.isKeyPressed(Input.KEY_9)){
-                    if (info.prediction && info.predictionTraces){
-                        info.prediction = !info.prediction;
-			info.predictionTraces = !info.predictionTraces;
-                    }else if(info.prediction && !info.predictionTraces){
+                    if(info.prediction && !info.predictionTraces){
                         info.predictionTraces = true;
                     }else{
-                        info.predictionTraces = true;
-                        info.prediction = true;
-                        
+                        info.prediction = !info.prediction;
+			info.predictionTraces = !info.predictionTraces;
                     }
                 }
 
