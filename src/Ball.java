@@ -88,7 +88,7 @@ public class Ball {
 		position[0] = x;
 		ball.setX(x);
 	}
-	
+
 	/**
 	 * @return Get the minimum X value
 	 */
@@ -116,7 +116,7 @@ public class Ball {
 	public double getMaxY() {
 		return ball.getMaxY();
 	}
-	
+
 	/**
 	 * @return Get the center X coordinate
 	 */
@@ -152,7 +152,7 @@ public class Ball {
 		position[1] = y;
 		ball.setY(y);
 	}
-	
+
 	/********
 	 * SIZE *
 	 ********/
@@ -224,7 +224,7 @@ public class Ball {
 	public void setBallSpeed(double speed) {
 		this.speed = speed;
 	}
-	
+
 	/***************
 	 * MATHEMATICS *
 	 ***************/
@@ -266,7 +266,7 @@ public class Ball {
 	public float predictY(Player player) {
 		// start clean
 		predictionTrace.clear();
-		
+
 		// the offset next to the paddle
 		float offsetX = getDx() < 0 ? getWidth() : -getWidth();
 
@@ -276,7 +276,7 @@ public class Ball {
 		// position of the ball
 		float x1 = getCenterX();
 		float y1 = getCenterY();
-		
+
 		// keep track of the bounce coordinates
 		predictionTrace.add( new float[]{x1,y1} );
 
@@ -309,7 +309,7 @@ public class Ball {
 
 			// recalculate estimated hitting point -
 			y2 = linEqY(d*-a, x1, y1, x2);
-			
+
 			// keep track of the bounce coordinates
 			predictionTrace.add( new float[]{x1,y1} );
 

@@ -22,7 +22,7 @@ public class Player {
 		player = new Rectangle(x, y, contWidth/40f, contHeight/3f);
 		speed = 5.0;
 	}
-	
+
 	/**
 	 * @return the Player
 	 */
@@ -171,7 +171,7 @@ public class Player {
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
-	
+
 	public String toString() {
 		return "Player: \n"
 				+ "X="+ getCenterX() + "\n"
