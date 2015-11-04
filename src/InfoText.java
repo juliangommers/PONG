@@ -30,7 +30,7 @@ public class InfoText {
 	Boolean predictionTraces;
 	
 	/**
-	 *
+	 * Constructor
 	 */
 	public InfoText(){
 		positionScoreP1 = new float[]{(contWidth/10f)*4f, 50};
@@ -40,7 +40,8 @@ public class InfoText {
 	}
 
 	/**
-	 * @param g
+	 * Dashed line of the game representing the middle.
+	 * @param g The field
 	 */
 	public void dashedLine(Graphics g){
 		for (int i = 0; i < contHeight; i += contWidth/30f) {
@@ -49,7 +50,8 @@ public class InfoText {
 	}
 
 	/**
-	 * @param location
+	 * Import fonts.
+	 * @param location 
 	 * @param style
 	 * @param size
 	 * @return
@@ -73,6 +75,7 @@ public class InfoText {
 	}
 
 	/**
+	 * Show scores
 	 * @param scores
 	 */
 	public void scores(Scores scores){
@@ -81,7 +84,7 @@ public class InfoText {
 	}
 
 	/**
-	 *
+	 * Pause screen
 	 */
 	public void pauseScreen() {
 		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("PAUSE") / 2f), (contHeight / 2f) - (ttf50b.getHeight() / 2f), "PAUSE");
@@ -91,7 +94,7 @@ public class InfoText {
 	}
 
 	/**
-	 *
+	 * Starting screen
 	 */
 	public void startScreen() {
 		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("PONG") / 2f), (contHeight / 10f) - (ttf50b.getHeight() / 2f), "PONG");
@@ -101,7 +104,7 @@ public class InfoText {
 	}
 
 	/**
-	 *
+	 * Instructions how to play
 	 */
 	public void playerInstructions() {
 		ttf20b.drawString((contWidth / 20f), (contHeight / 20f) * 17 - (ttf20b.getHeight() / 2f), "P1");
@@ -116,7 +119,7 @@ public class InfoText {
 	}
 
 	/**
-	 *
+	 * Choose difficulty of the level
 	 */
 	public void levelScreen() {
 		ttf30b.drawString((contWidth / 10f) * 3, (contHeight / 10f) * 3 - (ttf30b.getHeight() / 2f), "Choose difficulty");
@@ -125,6 +128,9 @@ public class InfoText {
 		ttf30b.drawString((contWidth / 10f) * 3, (contHeight / 10f) * 6 - (ttf30b.getHeight() / 2f), "3 - Expert");
 	}
 	
+	/**
+	 * Show the credits
+	 */
 	public void credits(){
 		String str1 = "Thank you for playing PONG!";
 		String str2 = "Original game by: Allan Alcorn (Atari Inc.)";
@@ -139,6 +145,7 @@ public class InfoText {
 	}
 
 	/**
+	 * Predict the predicted Y
 	 * @param ball
 	 * @param g
 	 */
