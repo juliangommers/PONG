@@ -1,5 +1,7 @@
 
 import java.awt.Font;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,6 +48,7 @@ public class StartGame extends BasicGame {
 
 	// Keep track of the current frame
 	int currentFrame;
+	private boolean showCredits;
 
 	/**
 	 * Constructor of StartGame
@@ -58,6 +61,7 @@ public class StartGame extends BasicGame {
 		gameType = 0;
 		level = 0;
 		currentFrame = 0;
+		showCredits = false;
 	}
 
 	/**
@@ -102,19 +106,17 @@ public class StartGame extends BasicGame {
 		player2 = new Player(((contWidth/10f)*9)-(contWidth/40f), contHeight/3f);
 
 		// load the fonts in different sizes
-		Font font20 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 20);
-		Font font30 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
-		Font font50 = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
+		Font font15b = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 15);
+		Font font20b = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 20);
+		Font font30b = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 30);
+		Font font50b = info.loadFont("src/media/Arial_Black.ttf", Font.BOLD, 50);
 
 		// initialize the used fonts
-		info.playerFont			= new TrueTypeFont( font20 , true);
-		info.scoreFont 			= new TrueTypeFont( font30 , true);
-		info.pauseFont 			= new TrueTypeFont( font50 , true);
-		info.pongFont 			= new TrueTypeFont( font50 , true);
-		info.bounceFont			= new TrueTypeFont( font20 , true);
-		info.predictionFont		= new TrueTypeFont( font30 , true);
-		info.levelFont			= new TrueTypeFont( font30 , true);
-
+		info.ttf15b		= new TrueTypeFont( font15b , true);
+		info.ttf20b		= new TrueTypeFont( font20b , true);
+		info.ttf30b 	= new TrueTypeFont( font30b , true);
+		info.ttf50b 	= new TrueTypeFont( font50b , true);
+		
 		// initialize the sounds
 		plop = new Sound("media/8bit_plop.wav");
 		beep = new Sound("media/8bit_beep.wav");
@@ -157,7 +159,15 @@ public class StartGame extends BasicGame {
 		// User can exit the game
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
 			if(container.isPaused()){
-				container.exit();
+				showCredits = true;
+				Timer timer = new Timer();
+				timer.schedule(new TimerTask() {
+					  @Override
+					  public void run() {
+						  container.exit();
+					  }
+					}, (long)3000);
+				
 			}else{
 				container.setPaused(!container.isPaused());
 			}
@@ -477,21 +487,24 @@ public class StartGame extends BasicGame {
 		}
 
 		// show instruction
-		if(gameType == 1 && !gameStarted){
+		if(gameType == 1 && !gameStarted && !showCredits){
 			info.levelScreen();
 			info.playerInstructions();
 		}
 
 		g.setColor(new Color(255, 255, 255));
 		// Show the start screen at the beginning of the game
-		if(gameType == 0 && !gameStarted){
+		if(gameType == 0 && !gameStarted && !showCredits){
 			info.startScreen();
 			info.playerInstructions();
 		}
 
 		// Show the pause screen when the game is paused
-		if(container.isPaused() && gameStarted)
+		if(container.isPaused() && gameStarted && !showCredits)
 			info.pauseScreen();
+		
+		if(showCredits)
+			info.credits();
 
 	}
 
