@@ -165,7 +165,7 @@ public class InfoText {
 			// show where the ball will hit on the border
 			if (predictionTraces || prediction) {
 				if (i == ball.predictionTrace.size() - 1) {
-					ttf50b.drawString(x2 - (ttf50b.getWidth("[]") / 2f), y2 - (ttf50b.getHeight() / 2f), "[]");
+					ttf30b.drawString(x2 - (ttf30b.getWidth("[]") / 2f), y2 - (ttf30b.getHeight() / 2f), "[]");
 				} else {
 					if (predictionTraces) {
 						ttf20b.drawString(x2 - (ttf20b.getWidth("x") / 2f), y2 - (ttf20b.getHeight() / 2f), "x");
