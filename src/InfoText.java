@@ -79,8 +79,8 @@ public class InfoText {
 	 * @param scores
 	 */
 	public void scores(Scores scores){
-		ttf50b.drawString(positionScoreP1[0]-ttf50b.getWidth(scores.getStringScoreP1()), positionScoreP1[1], scores.getStringScoreP1());
-		ttf50b.drawString(positionScoreP2[0], positionScoreP2[1], scores.getStringScoreP2());
+		ttf30b.drawString(positionScoreP1[0]-ttf30b.getWidth(scores.getStringScoreP1()), positionScoreP1[1], scores.getStringScoreP1());
+		ttf30b.drawString(positionScoreP2[0], positionScoreP2[1], scores.getStringScoreP2());
 	}
 
 	/**
@@ -88,9 +88,9 @@ public class InfoText {
 	 */
 	public void pauseScreen() {
 		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("PAUSE") / 2f), (contHeight / 2f) - (ttf50b.getHeight() / 2f), "PAUSE");
-		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("P- resume") / 2f), (contHeight / 10f) * 7 - (ttf50b.getHeight() / 2f), "P- resume");
-		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("R- return to start screen") / 2f), (contHeight / 10f) * 8 - (ttf50b.getHeight() / 2f), "R- return to start screen");
-		ttf50b.drawString((contWidth / 2f) - (ttf50b.getWidth("ESC- exit game") / 2f), (contHeight / 10f) * 9 - (ttf50b.getHeight() / 2f), "ESC- exit game");
+		ttf30b.drawString((contWidth / 2f) - (ttf30b.getWidth("P- resume") / 2f), (contHeight / 10f) * 7 - (ttf30b.getHeight() / 2f), "P- resume");
+		ttf30b.drawString((contWidth / 2f) - (ttf30b.getWidth("R- return to start screen") / 2f), (contHeight / 10f) * 8 - (ttf30b.getHeight() / 2f), "R- return to start screen");
+		ttf30b.drawString((contWidth / 2f) - (ttf30b.getWidth("ESC- exit game") / 2f), (contHeight / 10f) * 9 - (ttf30b.getHeight() / 2f), "ESC- exit game");
 	}
 
 	/**

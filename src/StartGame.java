@@ -455,7 +455,7 @@ public class StartGame extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 
-		if(gameStarted){
+		if(gameStarted && !showCredits){
 			g.draw(player1.getPlayer());
 			g.setColor(new Color(255, 255, 255));
 			g.fill(player1.getPlayer());
